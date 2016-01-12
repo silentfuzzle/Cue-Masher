@@ -1,5 +1,5 @@
-# Cue-Masher
-========
+# Cue Masher
+-------------
 
 Cue Masher is a free sound effect and music player created for plays and other theater productions with complex sound designs. With it, you can map keys on your keyboard to sound effects and music. You can also select sound effects throug the GUI. The application can play multiple sound tracks and sound effects at the same time, and sounds can be stopped by pressing the Spacebar.
 
