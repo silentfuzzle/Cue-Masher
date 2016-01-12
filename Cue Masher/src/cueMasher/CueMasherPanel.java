@@ -1,3 +1,6 @@
+// License MIT
+// 2016, Emily Palmieri <silentfuzzle@gmail.com>
+
 package cueMasher;
 
 import java.awt.*;
@@ -34,12 +37,37 @@ public class CueMasherPanel extends JPanel {
 		buttonHeight = (SCREEN_HEIGHT-(BUTTON_SPACE*7))/6;
 		
 		soundList = new ArrayList<SoundInfo>();
+
+		//Create a button for the spacebar
+		space = new JButton("Stop (spacebar)");
+		space.addActionListener(new ButtonListener());
+		//The panel must always be in focus for the keys to work and play sounds
+		space.setFocusable(false);
+		//Add the spacebar button to the panel
+		add(space);
+		
+		populatePanelFromTextFile("./soundPaths");
+	}
+	
+	// Set the buttons displayed in the panel
+	// textFilePath - The path to the sound effect definition file
+	public void populatePanelFromTextFile(String textFilePath) {
+		
+		// Remove all the old buttons and refresh the panel
+		for (int i=0; i < soundList.size(); i++) {
+			SoundInfo curr = soundList.get(i);
+			remove(curr.getButton());
+		}
+		revalidate();
+        repaint();
+
+		soundList = new ArrayList<SoundInfo>();
 		ButtonListener btnListener = new ButtonListener();
 		
 		//Attempt to get the text file of information and initial the sounds
 		try {
 			//Get the file and a Scanner to look through it
-			File soundPaths = new File("./soundPaths");
+			File soundPaths = new File(textFilePath);
 			Scanner scanSoundPathDoc = new Scanner(soundPaths);
 			
 			//Create another scanner to parse each line of the text file
@@ -85,14 +113,6 @@ public class CueMasherPanel extends JPanel {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		//Create a button for the spacebar
-		space = new JButton("Stop (spacebar)");
-		space.addActionListener(btnListener);
-		//The panel must always be in focus for the keys to work and play sounds
-		space.setFocusable(false);
-		//Add the spacebar button to the panel
-		add(space);
 	}
 	
 	//Set the positions and sizes of the buttons and display the panel
@@ -164,7 +184,7 @@ public class CueMasherPanel extends JPanel {
 			System.out.println(e.getKeyCode() + ", " + e.getKeyChar());				//testing
 			
 			//If the key pressed is the spacebar, stop all sounds that are stoppable
-			if (e.getKeyCode() == e.VK_SPACE)
+			if (e.getKeyCode() == KeyEvent.VK_SPACE)
 				//Loop through each sound and stop all that are stoppable
 				for (int j=0; j < soundList.size(); j++) {
 					soundList.get(j).stop();

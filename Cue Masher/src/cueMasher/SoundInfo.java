@@ -1,9 +1,11 @@
+// License MIT
+// 2016, Emily Palmieri <silentfuzzle@gmail.com>
+
 package cueMasher;
 
-import javax.sound.sampled.Clip;
 import javax.swing.JButton;
 
-//Stores a sound: it's path, button, player, keycode, label, and associated information
+//Stores a sound: its path, button, player, keycode, label, and associated information
 public class SoundInfo {
 	private String path, keyName, btnLabel;
 	private int keyCode;

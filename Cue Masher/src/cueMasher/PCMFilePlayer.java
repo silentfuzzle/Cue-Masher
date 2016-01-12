@@ -1,5 +1,6 @@
-
-// http://codeidol.com/java/swing/Audio/Play-Non-Trivial-Audio/
+// License MIT
+// 2016, Emily Palmieri <silentfuzzle@gmail.com>
+// Original code source: http://codeidol.com/java/swing/Audio/Play-Non-Trivial-Audio/
 
 package cueMasher;
 

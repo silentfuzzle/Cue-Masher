@@ -1,5 +1,5 @@
-//http://download.oracle.com/javase/tutorial/uiswing/examples/components/FileChooserDemoProject/src/components/FileChooserDemo.java
-//http://download.oracle.com/javase/tutorial/uiswing/examples/components/CheckBoxDemoProject/src/components/CheckBoxDemo.java
+// License MIT
+// 2016, Emily Palmieri <silentfuzzle@gmail.com>
 
 package cueMasher;
 
