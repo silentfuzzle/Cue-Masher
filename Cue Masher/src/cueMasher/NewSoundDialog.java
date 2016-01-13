@@ -9,88 +9,141 @@ import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
 
+// This class defines the dialog box for creating new and editing existing keyboard-sound mappings.
 public class NewSoundDialog extends JPanel {
-	JFrame containerFrame;
-	private JFileChooser fileChooser;
-	private JButton selectSound, addSound, cancel;
-	private JLabel lblKey, lblName;
-	private JTextField soundPath, key, soundName;
-	private JCheckBox stoppable, loop;
+	private static final long serialVersionUID = 1L;
 	
-	public NewSoundDialog(JFrame f) {
+	private JFrame containerFrame;
+	private CueMasherPanel parentPanel;
+	private JFileChooser fileChooser;
+	
+	private JButton btnSelectSound, btnAddSound, btnCancel;
+	private JLabel lblKey, lblName;
+	private JTextField txtSoundPath, txtKey, txtSoundName;
+	private JCheckBox cbxStoppable;
+	
+	private int enteredKeyCode;
+	
+	// Constructor
+	// f - The frame containing this panel
+	// mainPanel - The main interface
+	public NewSoundDialog(JFrame f, CueMasherPanel mainPanel) {
 		setPreferredSize(new Dimension(300,172));
-		containerFrame = f;
 		
+		containerFrame = f;
+		parentPanel = mainPanel;
+		
+		// Define the file chooser used to select the sound file
 		fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new SoundFilter());
 		
-		ButtonListener btnListener = new ButtonListener();
-		selectSound = new JButton("Browse...");
-		selectSound.addActionListener(btnListener);
-		add(selectSound);
-		addSound = new JButton("Add Sound");
-		addSound.addActionListener(btnListener);
-		add(addSound);
-		cancel = new JButton("Cancel");
-		cancel.addActionListener(btnListener);
-		add(cancel);
+        // Define the button to invoke the file chooser
+		btnSelectSound = new JButton("Browse...");
+		btnSelectSound.addActionListener(new PathListener());
+		add(btnSelectSound);
 		
-		soundPath = new JTextField();
-		soundPath.setEditable(false);
-		soundPath.setText("Select a sound");
-		add(soundPath);
+		// Define the button to add the sound to the sound board
+		btnAddSound = new JButton("Add Sound");
+		btnAddSound.addActionListener(new UpdateSoundListener());
+		add(btnAddSound);
 		
+		// Define the button to cancel creating or editing the sound
+		btnCancel = new JButton("Cancel");
+		btnCancel.addActionListener(new CancelListener());
+		add(btnCancel);
+		
+		// Define the text field to display the path to the sound file
+		txtSoundPath = new JTextField();
+		txtSoundPath.setEditable(false);
+		txtSoundPath.setText("Select a sound");
+		add(txtSoundPath);
+		
+		// Define explanatory labels
 		lblKey = new JLabel("Cue key:");
 		add(lblKey);
 		lblName = new JLabel("Sound name:");
 		add(lblName);
 		
-		key = new JTextField();
-		add(key);
-		soundName = new JTextField();
-		add(soundName);
+		// Define the text field for entering the key to use to play the sound with
+		txtKey = new JTextField();
+		txtKey.addKeyListener(new KeyCodeListener());
+		txtKey.setDocument(new JTextFieldLimit(1));
+		add(txtKey);
 		
-		stoppable = new JCheckBox("Stoppable");
-		add(stoppable);
-		loop = new JCheckBox("Loop");
-		add(loop);
+		// Define the text field for entering the short name of the sound
+		txtSoundName = new JTextField();
+		txtSoundName.setDocument(new JTextFieldLimit(20));
+		add(txtSoundName);
+		
+		// Define the checkbox determining whether the sound is stoppable or not
+		cbxStoppable = new JCheckBox("Stoppable");
+		add(cbxStoppable);
+		/*loop = new JCheckBox("Loop");
+		add(loop);*/
 	}
 	
+	// Display the dialog box controls
 	public void paintComponent(Graphics page) {
-		System.out.println(cancel.getLocation() + "," + addSound.getLocation() + "," + loop.getLocation());
-		selectSound.setLocation(10, 10);
-		soundPath.setLocation(107, 13);
+		super.paintComponent(page);
+		
+		btnSelectSound.setLocation(10, 10);
+		txtSoundPath.setLocation(107, 13);
 		lblKey.setLocation(10,46);
-		key.setLocation(lblKey.getWidth()+20,46);
-		key.setSize(20,20);
+		txtKey.setLocation(lblKey.getWidth()+20,46);
+		txtKey.setSize(20,20);
 		lblName.setLocation(10,76);
-		soundName.setLocation(lblName.getWidth()+20,76);
-		soundName.setSize(190,20);
-		stoppable.setLocation(10,106);
-		loop.setLocation(102, 106);
-		addSound.setLocation(10,140);
-		cancel.setLocation(115,140);
+		txtSoundName.setLocation(lblName.getWidth()+20,76);
+		txtSoundName.setSize(190,20);
+		cbxStoppable.setLocation(10,106);
+		//loop.setLocation(102, 106);
+		btnAddSound.setLocation(10,140);
+		btnCancel.setLocation(115,140);
 	}
-	
-	private class ButtonListener implements ActionListener {
-		public void actionPerformed(ActionEvent event) {
-			if (event.getSource() == selectSound) {
-				int choice = fileChooser.showOpenDialog(NewSoundDialog.this);
-				
-				if (choice == JFileChooser.APPROVE_OPTION) {
-					File file = fileChooser.getSelectedFile();
-					soundPath.setText(file.getAbsolutePath());
-				}
-			}
-			else {
-				containerFrame.dispose();
+
+	// Saves the key code associated with the key to play the sound with
+	private class KeyCodeListener implements KeyListener {
+		public void keyPressed(KeyEvent e) {}
+		public void keyReleased(KeyEvent e) {}
+		
+		public void keyTyped(KeyEvent e) {
+			int keyCode = e.getKeyCode();
+			String keyName = KeyEvent.getKeyText(keyCode);
+			String existingKeyName = txtKey.getText();
+			if (keyName.equalsIgnoreCase(existingKeyName)) {
+				enteredKeyCode = keyCode;
 			}
 		}
 	}
 	
-	private class CheckListener implements ItemListener {
-		public void itemStateChanged(ItemEvent event) {
+	// Displays a file chooser where the user can select the sound file they would like to add to the sound board
+	private class PathListener implements ActionListener {
+		public void actionPerformed(ActionEvent event) {
+			int choice = fileChooser.showOpenDialog(NewSoundDialog.this);
 			
+			if (choice == JFileChooser.APPROVE_OPTION) {
+				File file = fileChooser.getSelectedFile();
+				txtSoundPath.setText(file.getAbsolutePath());
+			}
+		}
+	}
+	
+	// Adds a sound to the sound board when the user has finished editing the sound
+	private class UpdateSoundListener implements ActionListener {
+		public void actionPerformed(ActionEvent event) {
+			int stoppable = 0;
+			if (cbxStoppable.isSelected()) {
+				stoppable = 1;
+			}
+			
+			parentPanel.addNewSound(txtSoundPath.getText(), enteredKeyCode, KeyEvent.getKeyText(enteredKeyCode), txtSoundName.getText(), stoppable);
+			containerFrame.dispose();
+		}
+	}
+	
+	// Close the dialog box without saving the user's changes
+	private class CancelListener implements ActionListener {
+		public void actionPerformed(ActionEvent event) {
+			containerFrame.dispose();
 		}
 	}
 }

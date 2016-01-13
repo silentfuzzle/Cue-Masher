@@ -12,6 +12,8 @@ import java.util.*;
 
 //The main panel
 public class CueMasherPanel extends JPanel {
+	private static final long serialVersionUID = 1L;
+	
 	private ArrayList<SoundInfo> soundList;	//Holds the list of objects containing the sounds and other information
 	private final int SCREEN_WIDTH = 1910;	//The estimated width of the application
 	private final int SCREEN_HEIGHT = 1000;	//The estimated height of the application
@@ -45,8 +47,6 @@ public class CueMasherPanel extends JPanel {
 		space.setFocusable(false);
 		//Add the spacebar button to the panel
 		add(space);
-		
-		populatePanelFromTextFile("./soundPaths");
 	}
 	
 	// Set the buttons displayed in the panel
@@ -62,7 +62,6 @@ public class CueMasherPanel extends JPanel {
         repaint();
 
 		soundList = new ArrayList<SoundInfo>();
-		ButtonListener btnListener = new ButtonListener();
 		
 		//Attempt to get the text file of information and initial the sounds
 		try {
@@ -77,42 +76,78 @@ public class CueMasherPanel extends JPanel {
 				scanLine = new Scanner(scanSoundPathDoc.nextLine());
 				//File is delimited with CSV format
 				scanLine.useDelimiter(",");
-				//Store the sound path and other information in the text file in an object
-				SoundInfo soundClip = new SoundInfo(scanLine.next(),scanLine.nextInt(),scanLine.next(),scanLine.next(),scanLine.nextInt());
-				//Create a button for the sound
-				JButton btn = new JButton(soundClip.getBtnLabel() + " (" + soundClip.getKeyName() + ")");
-				btn.addActionListener(btnListener);
-				//The panel must always be in focus for the keys to work and play sounds
-				btn.setFocusable(false);
-				//Store this button in the sound's object
-				soundClip.setButton(btn);
-				//Add the sound object to the list of objects
-				soundList.add(soundClip);
-				//Add the button to the panel
-				add(btn);
-			}
-			
-			//For each sound object, find the sound file associated with the stored path
-			for (int i=0; i < soundList.size(); i++) {
-				SoundInfo curr = soundList.get(i);
-	            File soundPath = new File(curr.getPath());
-	            //Create the player that will stop, play and reset the sound file
-	            PCMFilePlayer clip = new PCMFilePlayer(soundPath);
-	            //Store the player in the sound object
-	            soundList.get(i).setSound(clip);
+				
+				addSound(scanLine.next(),scanLine.nextInt(),scanLine.next(),scanLine.next(),scanLine.nextInt());
 			}
 		} catch (FileNotFoundException e) {
 			System.out.println("Not found");
+		}
+	}
+
+	// Add a sound to the displayed buttons, sound list, and sound file
+	// soundPath - The path to the sound file on the file system
+	// keyCode - The code of the key the user can press to play the sound
+	// keyName - The name of the key the user can press to play the sound
+	// soundName - The short name of the sound to display in the GUI
+	// stoppable - True if the sound can be stopped with the Spacebar
+	public void addNewSound(String soundPath, int keyCode, String keyName, String soundName, int stoppable) {
+		boolean add = true;
+		
+		// Make sure that the given key has not already been assigned a sound
+		for (int i=0; i < soundList.size(); i++) {
+			SoundInfo curr = soundList.get(i);
+			int currKeyCode = curr.getKeyCode();
+			if (currKeyCode == keyCode)
+			{
+				add = false;
+				break;
+			}
+		}
+		
+		if (add) {
+			addSound(soundPath, keyCode, keyName, soundName, stoppable);
+
+			// Display the new button in the GUI
+			revalidate();
+	        repaint();
+		}
+	}
+	
+	// Add a sound to the displayed buttons and sound list
+	// soundPath - The path to the sound file on the file system
+	// keyCode - The code of the key the user can press to play the sound
+	// keyName - The name of the key the user can press to play the sound
+	// soundName - The short name of the sound to display in the GUI
+	// stoppable - True if the sound can be stopped with the Spacebar
+	private void addSound(String soundPath, int keyCode, String keyName, String soundName, int stoppable) {
+		
+		//Store the sound path and other information in the text file in an object
+		SoundInfo soundClip = new SoundInfo(soundPath, keyCode, keyName, soundName, stoppable);
+		
+		//Create a button for the sound
+		JButton btn = new JButton(soundClip.getBtnLabel() + " (" + soundClip.getKeyName() + ")");
+		btn.addActionListener(new ButtonListener());
+		btn.setFocusable(false); //The panel must always be in focus for the keys to work and play sounds
+		soundClip.setButton(btn);
+
+        //Create the player that will stop, play and reset the sound file
+		File soundFile = new File(soundClip.getPath());
+		try {
+			PCMFilePlayer clip = new PCMFilePlayer(soundFile);
+            soundClip.setSound(clip);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (UnsupportedAudioFileException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (LineUnavailableException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+        
+		//Add the sound object to the list of objects
+		soundList.add(soundClip);
+		
+		//Add the button to the panel
+		add(btn);
 	}
 	
 	//Set the positions and sizes of the buttons and display the panel
@@ -201,7 +236,7 @@ public class CueMasherPanel extends JPanel {
 					if (e.getKeyCode() == curr.getKeyCode()) {
 						found = true;
 						//Play the sound
-						curr.getSound().start();
+						curr.play();
 					}
 					
 					//Increment the sound to be examined
@@ -236,7 +271,7 @@ public class CueMasherPanel extends JPanel {
 					if (event.getSource() == curr.getButton()) {
 						found = true;
 						//Play the sound stored in the object
-						curr.getSound().start();
+						curr.play();
 					}
 					
 					//Increment the sound object to be examined

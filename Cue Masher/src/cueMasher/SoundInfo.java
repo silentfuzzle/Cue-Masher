@@ -81,16 +81,17 @@ public class SoundInfo {
 		this.sound = sound;
 	}
 
-	//Get the player for the sound
-	public PCMFilePlayer getSound() {
-		return sound;
+	//Play the sound if it is playable
+	public void play() {
+		if (sound != null)
+		{
+			sound.start();
+		}
 	}
 	
 	//Stop the sound if it is stoppable
 	public void stop() {
-		//If the sound is stoppable, stop it
 		if (stoppable)
 			sound.stop();
-		//Otherwise, do nothing
 	}
 }

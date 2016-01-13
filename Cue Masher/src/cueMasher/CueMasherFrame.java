@@ -10,6 +10,8 @@ import javax.swing.*;
 
 // This class defines the frame of the Cue Masher GUI.
 public class CueMasherFrame extends JFrame {
+	private static final long serialVersionUID = 1L;
+	
 	private CueMasherPanel panel;
 
 	// Constructor
@@ -47,7 +49,7 @@ public class CueMasherFrame extends JFrame {
 		public void actionPerformed(ActionEvent event) {
 			JFrame selectDialog = new JFrame("Add Sound");
 			selectDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-			selectDialog.getContentPane().add(new NewSoundDialog(selectDialog));
+			selectDialog.getContentPane().add(new NewSoundDialog(selectDialog, panel));
 			selectDialog.pack();
 			selectDialog.setVisible(true);
 		}
