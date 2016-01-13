@@ -3,6 +3,7 @@
 
 package cueMasher;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.*;
@@ -13,22 +14,28 @@ import javax.swing.*;
 public class NewSoundDialog extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
+	private String DEFAULT_SOUND_PATH = "Select a sound";
+	private int DEFAULT_KEY_CODE = -1;
+	
 	private JFrame containerFrame;
 	private CueMasherPanel parentPanel;
 	private JFileChooser fileChooser;
 	
 	private JButton btnSelectSound, btnAddSound, btnCancel;
-	private JLabel lblKey, lblName;
+	private JLabel lblKey, lblName, lblWarning;
 	private JTextField txtSoundPath, txtKey, txtSoundName;
 	private JCheckBox cbxStoppable;
 	
-	private int enteredKeyCode;
+	private int enteredKeyCode = DEFAULT_KEY_CODE;
 	
 	// Constructor
 	// f - The frame containing this panel
 	// mainPanel - The main interface
 	public NewSoundDialog(JFrame f, CueMasherPanel mainPanel) {
-		setPreferredSize(new Dimension(300,172));
+		int width = 400;
+		int height = 172;
+		setPreferredSize(new Dimension(width,height));
+		f.setMinimumSize(new Dimension(width+5,height+30));
 		
 		containerFrame = f;
 		parentPanel = mainPanel;
@@ -55,7 +62,10 @@ public class NewSoundDialog extends JPanel {
 		// Define the text field to display the path to the sound file
 		txtSoundPath = new JTextField();
 		txtSoundPath.setEditable(false);
-		txtSoundPath.setText("Select a sound");
+		txtSoundPath.setText(DEFAULT_SOUND_PATH);
+		Dimension size = new Dimension(280,20);
+		txtSoundPath.setPreferredSize(size);
+		txtSoundPath.setMaximumSize(size);
 		add(txtSoundPath);
 		
 		// Define explanatory labels
@@ -63,6 +73,9 @@ public class NewSoundDialog extends JPanel {
 		add(lblKey);
 		lblName = new JLabel("Sound name:");
 		add(lblName);
+		lblWarning = new JLabel("");
+		lblWarning.setForeground(Color.red);
+		add(lblWarning);
 		
 		// Define the text field for entering the key to use to play the sound with
 		txtKey = new JTextField();
@@ -98,21 +111,29 @@ public class NewSoundDialog extends JPanel {
 		//loop.setLocation(102, 106);
 		btnAddSound.setLocation(10,140);
 		btnCancel.setLocation(115,140);
+		lblWarning.setLocation(200,145);
 	}
 
 	// Saves the key code associated with the key to play the sound with
 	private class KeyCodeListener implements KeyListener {
 		public void keyPressed(KeyEvent e) {}
-		public void keyReleased(KeyEvent e) {}
 		
-		public void keyTyped(KeyEvent e) {
+		public void keyReleased(KeyEvent e) {
 			int keyCode = e.getKeyCode();
-			String keyName = KeyEvent.getKeyText(keyCode);
+			String keyName = String.valueOf(e.getKeyChar());
 			String existingKeyName = txtKey.getText();
-			if (keyName.equalsIgnoreCase(existingKeyName)) {
+			if (keyName.equalsIgnoreCase(existingKeyName) &&
+					keyCode != KeyEvent.VK_SPACE) {
 				enteredKeyCode = keyCode;
+				txtKey.setText(keyName);
+			}
+			else {
+				// The Spacebar isn't a valid key that sounds can be mapped to
+				txtKey.setText(txtKey.getText().trim());
 			}
 		}
+		
+		public void keyTyped(KeyEvent e) {}
 	}
 	
 	// Displays a file chooser where the user can select the sound file they would like to add to the sound board
@@ -123,6 +144,10 @@ public class NewSoundDialog extends JPanel {
 			if (choice == JFileChooser.APPROVE_OPTION) {
 				File file = fileChooser.getSelectedFile();
 				txtSoundPath.setText(file.getAbsolutePath());
+				
+				// Update the contents of the sound file text box
+				revalidate();
+				repaint();
 			}
 		}
 	}
@@ -130,12 +155,43 @@ public class NewSoundDialog extends JPanel {
 	// Adds a sound to the sound board when the user has finished editing the sound
 	private class UpdateSoundListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
+			
+			// Make sure that a sound file has been selected
+			String soundPath = txtSoundPath.getText();
+			if (soundPath.equalsIgnoreCase(DEFAULT_SOUND_PATH))
+			{
+				lblWarning.setText("Please select a sound file.");
+				return;
+			}
+			
+			// Make sure that a key has been entered
+			String keyName = txtKey.getText();
+			if (enteredKeyCode == DEFAULT_KEY_CODE || keyName.isEmpty()) {
+				lblWarning.setText("Please enter a valid key.");
+				txtKey.setText("");
+				enteredKeyCode = DEFAULT_KEY_CODE;
+				return;
+			}
+			
+			// Make sure that a sound name has been entered
+			String soundName = txtSoundName.getText().trim();
+			if (soundName.isEmpty())
+			{
+				lblWarning.setText("Please enter a sound name.");
+				txtSoundName.setText(txtSoundName.getText().trim());
+				return;
+			}
+
+			// Get whether the sound is stoppable or not
 			int stoppable = 0;
 			if (cbxStoppable.isSelected()) {
 				stoppable = 1;
 			}
 			
-			parentPanel.addNewSound(txtSoundPath.getText(), enteredKeyCode, KeyEvent.getKeyText(enteredKeyCode), txtSoundName.getText(), stoppable);
+			// Add the sound to the interface
+			parentPanel.addNewSound(soundPath, enteredKeyCode, keyName, soundName, stoppable);
+			
+			// Close this window
 			containerFrame.dispose();
 		}
 	}
