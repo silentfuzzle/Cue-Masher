@@ -3,32 +3,72 @@
 
 package cueMasher;
 
-import javax.swing.JButton;
+import java.io.File;
+import java.io.IOException;
+
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 //Stores a sound: its path, button, player, keycode, label, and associated information
 public class SoundInfo {
-	private String path, keyName, btnLabel;
+	private String path, keyName, soundName;
 	private int keyCode;
 	private PCMFilePlayer sound;
-	private JButton button;
 	private boolean stoppable; //Indicates whether this sound can be stopped with spacebar or not
 	//Stopping short sound clips creates problems with where the file will begin playing again
 	
 	//Constructor
-	public SoundInfo(String p, int kC, String kN, String bL, int s) {
-		setPath(p);
-		setKeyName(kN);
-		setBtnLabel(bL);
-		setKeyCode(kC);
-		if (s == 0)
-			stoppable = false;
-		else
-			stoppable = true;
+	// soundPath - The path to the sound file on the file system
+	// keyCode - The code of the key the user can press to play the sound
+	// keyName - The name of the key the user can press to play the sound
+	// soundName - The short name of the sound to display in the GUI
+	// stoppable - 1 if the sound can be stopped with the Spacebar, 0 if not
+	public SoundInfo(String soundPath, int keyCode, String keyName, String soundName, int stoppable) {
+		setPath(soundPath);
+		setKeyName(keyName);
+		setSoundName(soundName);
+		setStoppable(stoppable);
+		this.keyCode = keyCode;
 	}
 
+	// Returns if all the information about this sound is equal to another sound's information
+	// otherSound - The sound to compare this sound's information to
+	public boolean equals(SoundInfo otherSound) {
+		boolean equal = otherSound.getPath().equalsIgnoreCase(path);
+		equal = (equal && otherSound.getKeyName().equalsIgnoreCase(keyName));
+		equal = (equal && otherSound.getSoundName().equalsIgnoreCase(soundName));
+		equal = (equal && (otherSound.getKeyCode() == keyCode));
+		equal = (equal && (otherSound.stoppable == stoppable));
+		
+		return equal;
+	}
+	
 	//Set where this sound is located on the hard drive
+	// path - The full path to the sound
 	public void setPath(String path) {
-		this.path = path;
+		if (this.path == null || this.path.equalsIgnoreCase(path)) {
+			this.path = path;
+			
+			// Close the open sound player
+			if (sound != null)
+				sound.close();
+
+	        //Create the player that will stop, play and reset the sound file
+			File soundFile = new File(this.path);
+			try {
+				PCMFilePlayer clip = new PCMFilePlayer(soundFile);
+	            sound = clip;
+			} catch (IOException e) {
+				e.printStackTrace();
+				sound = null;
+			} catch (UnsupportedAudioFileException e) {
+				e.printStackTrace();
+				sound = null;
+			} catch (LineUnavailableException e) {
+				e.printStackTrace();
+				sound = null;
+			}
+		}
 	}
 
 	//Get where this sound is located on the hard drive
@@ -37,6 +77,7 @@ public class SoundInfo {
 	}
 
 	//Set the name of the key to press to play the sound
+	// kN - The name of the key used to play this sound
 	public void setKeyName(String kN) {
 		this.keyName = kN;
 	}
@@ -47,38 +88,25 @@ public class SoundInfo {
 	}
 
 	//Set the name of the sound to display
-	public void setBtnLabel(String btnLabel) {
-		this.btnLabel = btnLabel;
+	// soundName - The name of the sound
+	public void setSoundName(String soundName) {
+		this.soundName = soundName;
 	}
 
 	//Get the name of the sound to display
-	public String getBtnLabel() {
-		return btnLabel;
-	}
-
-	//Set the code of the key to press to play the sound
-	public void setKeyCode(int keyCode) {
-		this.keyCode = keyCode;
+	public String getSoundName() {
+		return soundName;
 	}
 
 	//Get the code of the key to press to play the sound
 	public int getKeyCode() {
 		return keyCode;
 	}
-
-	//Set the JButton that plays the sound on press
-	public void setButton(JButton button) {
-		this.button = button;
-	}
-
-	//Get the JButton that plays the sound on press
-	public JButton getButton() {
-		return button;
-	}
-
-	//Set the player for the sound
-	public void setSound(PCMFilePlayer sound) {
-		this.sound = sound;
+	
+	// Sets whether this sound is stoppable
+	// stoppable - 1 if the sound can be stopped with the Spacebar, 0 if not
+	public void setStoppable(int stoppable) {
+		this.stoppable = (stoppable != 0);
 	}
 
 	//Play the sound if it is playable
@@ -91,7 +119,7 @@ public class SoundInfo {
 	
 	//Stop the sound if it is stoppable
 	public void stop() {
-		if (stoppable)
+		if (stoppable && sound != null)
 			sound.stop();
 	}
 }

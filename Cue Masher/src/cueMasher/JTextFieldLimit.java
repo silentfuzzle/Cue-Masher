@@ -1,3 +1,6 @@
+// License MIT
+// 2016, Emily Palmieri <silentfuzzle@gmail.com>
+
 package cueMasher;
 
 import javax.swing.text.AttributeSet;

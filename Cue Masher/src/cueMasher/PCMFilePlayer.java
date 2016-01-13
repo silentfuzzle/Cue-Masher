@@ -5,6 +5,7 @@
 package cueMasher;
 
 import java.io.*;
+
 import javax.sound.sampled.*;
 
 public class PCMFilePlayer implements Runnable { 
@@ -89,6 +90,16 @@ public class PCMFilePlayer implements Runnable {
 	public void stop() {
 		playing = false;
 		line.stop();
+	}
+	
+	// Stop and dispose of the sound this player plays
+	public void close() {
+		stop();
+		try {
+			in.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void reset() {

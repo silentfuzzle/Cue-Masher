@@ -14,13 +14,16 @@ import java.util.*;
 public class CueMasherPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
-	private ArrayList<SoundInfo> soundList;	//Holds the list of objects containing the sounds and other information
+	public static String SPACEBAR = "Spacebar";
 	private final int SCREEN_WIDTH = 1910;	//The estimated width of the application
 	private final int SCREEN_HEIGHT = 1000;	//The estimated height of the application
 	private final int BUTTON_SPACE = 10;	//The space to leave between buttons and the edge of the screen
 	private int[] buttonWidth;
 	private int buttonHeight;
-	private JButton space;
+	
+	private ArrayList<BoardButton> soundList;	//Holds the list of objects containing the sounds and other information
+	private ProjectFileManager soundManager;
+	private BoardButton space;
 	
 	//Constructor
 	public CueMasherPanel() {
@@ -38,15 +41,13 @@ public class CueMasherPanel extends JPanel {
 		buttonWidth[4] = (SCREEN_WIDTH-(BUTTON_SPACE*10))/10;
 		buttonHeight = (SCREEN_HEIGHT-(BUTTON_SPACE*7))/6;
 		
-		soundList = new ArrayList<SoundInfo>();
+		soundList = new ArrayList<BoardButton>();
+		soundManager = new ProjectFileManager();
 
 		//Create a button for the spacebar
-		space = new JButton("Stop (spacebar)");
-		space.addActionListener(new ButtonListener());
-		//The panel must always be in focus for the keys to work and play sounds
-		space.setFocusable(false);
-		//Add the spacebar button to the panel
-		add(space);
+		JButton btnSpace = new JButton("Stop (" + SPACEBAR + ")");
+		space = new StopButton(soundManager, btnSpace);
+		add(btnSpace);
 	}
 	
 	// Set the buttons displayed in the panel
@@ -55,32 +56,21 @@ public class CueMasherPanel extends JPanel {
 		
 		// Remove all the old buttons and refresh the panel
 		for (int i=0; i < soundList.size(); i++) {
-			SoundInfo curr = soundList.get(i);
+			BoardButton curr = soundList.get(i);
 			remove(curr.getButton());
 		}
 		revalidate();
         repaint();
 
-		soundList = new ArrayList<SoundInfo>();
+        // Refresh the list of sound board buttons
+		soundList = new ArrayList<BoardButton>();
 		
-		//Attempt to get the text file of information and initial the sounds
-		try {
-			//Get the file and a Scanner to look through it
-			File soundPaths = new File(textFilePath);
-			Scanner scanSoundPathDoc = new Scanner(soundPaths);
-			
-			//Create another scanner to parse each line of the text file
-			Scanner scanLine = new Scanner("");
-			//Parse each line in the text file
-			while(scanSoundPathDoc.hasNextLine()) {
-				scanLine = new Scanner(scanSoundPathDoc.nextLine());
-				//File is delimited with CSV format
-				scanLine.useDelimiter(",");
-				
-				addSound(scanLine.next(),scanLine.nextInt(),scanLine.next(),scanLine.next(),scanLine.nextInt());
-			}
-		} catch (FileNotFoundException e) {
-			System.out.println("Not found");
+		// Get the sounds contained in the given project file
+		SoundInfo[] readSounds = soundManager.readFile(textFilePath);
+		
+		// Add buttons to the interface for each sound in the file
+		for (int s=0; s < readSounds.length; s++) {
+			addSound(readSounds[s]);
 		}
 	}
 
@@ -89,23 +79,15 @@ public class CueMasherPanel extends JPanel {
 	// keyCode - The code of the key the user can press to play the sound
 	// keyName - The name of the key the user can press to play the sound
 	// soundName - The short name of the sound to display in the GUI
-	// stoppable - True if the sound can be stopped with the Spacebar
-	public void addNewSound(String soundPath, int keyCode, String keyName, String soundName, int stoppable) {
-		boolean add = true;
+	// stoppable - 1 if the sound can be stopped with the Spacebar, 0 if not
+	public void addSound(String soundPath, int keyCode, String keyName, String soundName, int stoppable) {
 		
-		// Make sure that the given key has not already been assigned a sound
-		for (int i=0; i < soundList.size(); i++) {
-			SoundInfo curr = soundList.get(i);
-			int currKeyCode = curr.getKeyCode();
-			if (currKeyCode == keyCode)
-			{
-				add = false;
-				break;
-			}
-		}
+		// Add the sound to the project
+		SoundInfo newSound = soundManager.addSound(soundPath, keyCode, keyName, soundName, stoppable);
 		
-		if (add) {
-			addSound(soundPath, keyCode, keyName, soundName, stoppable);
+		if (newSound != null) {
+			// Add a button to the GUI
+			addSound(newSound);
 
 			// Display the new button in the GUI
 			revalidate();
@@ -113,41 +95,17 @@ public class CueMasherPanel extends JPanel {
 		}
 	}
 	
-	// Add a sound to the displayed buttons and sound list
-	// soundPath - The path to the sound file on the file system
-	// keyCode - The code of the key the user can press to play the sound
-	// keyName - The name of the key the user can press to play the sound
-	// soundName - The short name of the sound to display in the GUI
-	// stoppable - True if the sound can be stopped with the Spacebar
-	private void addSound(String soundPath, int keyCode, String keyName, String soundName, int stoppable) {
-		
-		//Store the sound path and other information in the text file in an object
-		SoundInfo soundClip = new SoundInfo(soundPath, keyCode, keyName, soundName, stoppable);
+	// Add a button to the GUI for a sound
+	// soundInfo - The sound to add to the GUI
+	private void addSound(SoundInfo soundInfo) {
 		
 		//Create a button for the sound
-		JButton btn = new JButton(soundClip.getBtnLabel() + " (" + soundClip.getKeyName() + ")");
-		btn.addActionListener(new ButtonListener());
-		btn.setFocusable(false); //The panel must always be in focus for the keys to work and play sounds
-		soundClip.setButton(btn);
-
-        //Create the player that will stop, play and reset the sound file
-		File soundFile = new File(soundClip.getPath());
-		try {
-			PCMFilePlayer clip = new PCMFilePlayer(soundFile);
-            soundClip.setSound(clip);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (UnsupportedAudioFileException e) {
-			e.printStackTrace();
-		} catch (LineUnavailableException e) {
-			e.printStackTrace();
-		}
+		JButton btnSound = new JButton(soundInfo.getSoundName() + " (" + soundInfo.getKeyName() + ")");
+		SoundButton buttonContainer = new SoundButton(soundInfo, btnSound);
         
-		//Add the sound object to the list of objects
-		soundList.add(soundClip);
-		
-		//Add the button to the panel
-		add(btn);
+		//Add the new sound button to the list of buttons and the panel
+		soundList.add(buttonContainer);
+		add(btnSound);
 	}
 	
 	//Set the positions and sizes of the buttons and display the panel
@@ -160,10 +118,10 @@ public class CueMasherPanel extends JPanel {
 		
 		int xPos;
 		int yPos;
-		//Subtract 1 from this int everytime a sound button is placed where it belongs
+		//Subtract 1 from this int every time a sound button is placed where it belongs
 		//When it equals zero all sounds have been placed
 		int keysToMap = soundList.size();
-		ArrayList<SoundInfo> copy = (ArrayList<SoundInfo>) soundList.clone();
+		ArrayList<BoardButton> copy = (ArrayList<BoardButton>) soundList.clone();
 
 		//For each string in the rows array, check if any of the key strings for the sound match
 		for (int j=0; j < rows.length; j++) {
@@ -207,10 +165,11 @@ public class CueMasherPanel extends JPanel {
 		
 		//Set the x-position, y-position, and size of the spacebar key
 		//It will span the bottom of the screen and be the same height as the other buttons
+		JButton btnSpace = space.getButton();
 		xPos = 10;
 		yPos = ((buttonHeight+BUTTON_SPACE)*5) + BUTTON_SPACE;
-		space.setSize(new Dimension (SCREEN_WIDTH-BUTTON_SPACE, buttonHeight));
-		space.setLocation(xPos, yPos);
+		btnSpace.setSize(new Dimension (SCREEN_WIDTH-BUTTON_SPACE, buttonHeight));
+		btnSpace.setLocation(xPos, yPos);
 	}
 	
 	//Listens to the keyboard keys and plays sounds at touch
@@ -218,66 +177,16 @@ public class CueMasherPanel extends JPanel {
 		public void keyPressed(KeyEvent e) {
 			System.out.println(e.getKeyCode() + ", " + e.getKeyChar());				//testing
 			
-			//If the key pressed is the spacebar, stop all sounds that are stoppable
 			if (e.getKeyCode() == KeyEvent.VK_SPACE)
-				//Loop through each sound and stop all that are stoppable
-				for (int j=0; j < soundList.size(); j++) {
-					soundList.get(j).stop();
-				}
-			else {	//Otherwise, loop through the sound objects until the associated key that was pressed is found
-				int i=0;
-				boolean found = false;
-				
-				//Loop through all the sound objects, examining each toggle key
-				while ((i < soundList.size()) && (found == false)) {
-					SoundInfo curr = soundList.get(i);
-					
-					//If the key pressed is equal to the toggle key for the sound being examined...
-					if (e.getKeyCode() == curr.getKeyCode()) {
-						found = true;
-						//Play the sound
-						curr.play();
-					}
-					
-					//Increment the sound to be examined
-					i++;
-				}
+				// Stop all stoppable sounds
+				soundManager.stopSounds();
+			else {
+				// Play the associated sound
+				soundManager.playSound(e.getKeyCode());
 			}
 		}
 		
 		public void keyReleased(KeyEvent e) {}
 		public void keyTyped(KeyEvent e) {}
-	}
-	
-	//Listens to the buttons on the panel
-	private class ButtonListener implements ActionListener {
-		public void actionPerformed(ActionEvent event) {
-			//If the button pressed is the spacebar, stop all stoppable sounds
-			if (event.getSource() == space) {
-				//For each stoppable sound, stop it
-				for (int j=0; j < soundList.size(); j++) {
-					soundList.get(j).stop();
-				}
-			}
-			else { //Otherwise, find the button that was pressed and play its associated sound
-				int i=0;
-				boolean found = false;
-				
-				//Loop through the sound objects until the object storing the pressed button is found
-				while ((i < soundList.size()) && (found == false)) {
-					SoundInfo curr = soundList.get(i);
-					
-					//If the button pressed is equal to the button stored in the object being examined...
-					if (event.getSource() == curr.getButton()) {
-						found = true;
-						//Play the sound stored in the object
-						curr.play();
-					}
-					
-					//Increment the sound object to be examined
-					i++;
-				}
-			}
-		}
 	}
 }

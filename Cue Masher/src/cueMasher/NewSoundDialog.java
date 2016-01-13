@@ -22,7 +22,7 @@ public class NewSoundDialog extends JPanel {
 	private JFileChooser fileChooser;
 	
 	private JButton btnSelectSound, btnAddSound, btnCancel;
-	private JLabel lblKey, lblName, lblWarning;
+	private JLabel lblKey, lblFinalKey, lblName, lblWarning;
 	private JTextField txtSoundPath, txtKey, txtSoundName;
 	private JCheckBox cbxStoppable;
 	
@@ -71,6 +71,8 @@ public class NewSoundDialog extends JPanel {
 		// Define explanatory labels
 		lblKey = new JLabel("Cue key:");
 		add(lblKey);
+		lblFinalKey = new JLabel("Key");
+		add(lblFinalKey);
 		lblName = new JLabel("Sound name:");
 		add(lblName);
 		lblWarning = new JLabel("");
@@ -100,18 +102,23 @@ public class NewSoundDialog extends JPanel {
 		super.paintComponent(page);
 		
 		btnSelectSound.setLocation(10, 10);
-		txtSoundPath.setLocation(107, 13);
+		txtSoundPath.setLocation(btnSelectSound.getWidth()+20, 13);
+		
 		lblKey.setLocation(10,46);
 		txtKey.setLocation(lblKey.getWidth()+20,46);
 		txtKey.setSize(20,20);
+		lblFinalKey.setLocation(lblKey.getWidth()+txtKey.getWidth()+30,46);
+		
 		lblName.setLocation(10,76);
 		txtSoundName.setLocation(lblName.getWidth()+20,76);
 		txtSoundName.setSize(190,20);
+		
 		cbxStoppable.setLocation(10,106);
 		//loop.setLocation(102, 106);
+		
 		btnAddSound.setLocation(10,140);
-		btnCancel.setLocation(115,140);
-		lblWarning.setLocation(200,145);
+		btnCancel.setLocation(btnAddSound.getWidth()+20,140);
+		lblWarning.setLocation(btnAddSound.getWidth()+btnCancel.getWidth()+30,145);
 	}
 
 	// Saves the key code associated with the key to play the sound with
@@ -125,7 +132,16 @@ public class NewSoundDialog extends JPanel {
 			if (keyName.equalsIgnoreCase(existingKeyName) &&
 					keyCode != KeyEvent.VK_SPACE) {
 				enteredKeyCode = keyCode;
-				txtKey.setText(keyName);
+				
+				// Set the final key name that will be displayed in the GUI
+				if (keyCode == KeyEvent.VK_NUMPAD0 || keyCode == KeyEvent.VK_NUMPAD1 ||
+						keyCode == KeyEvent.VK_NUMPAD2 || keyCode == KeyEvent.VK_NUMPAD3 ||
+						keyCode == KeyEvent.VK_NUMPAD4 || keyCode == KeyEvent.VK_NUMPAD5 ||
+						keyCode == KeyEvent.VK_NUMPAD6 || keyCode == KeyEvent.VK_NUMPAD7 ||
+						keyCode == KeyEvent.VK_NUMPAD8 || keyCode == KeyEvent.VK_NUMPAD9) {
+					keyName = "N" + keyName;
+				}
+				lblFinalKey.setText(keyName);
 			}
 			else {
 				// The Spacebar isn't a valid key that sounds can be mapped to
@@ -165,10 +181,11 @@ public class NewSoundDialog extends JPanel {
 			}
 			
 			// Make sure that a key has been entered
-			String keyName = txtKey.getText();
-			if (enteredKeyCode == DEFAULT_KEY_CODE || keyName.isEmpty()) {
+			String keyName = lblFinalKey.getText();
+			if (enteredKeyCode == DEFAULT_KEY_CODE || lblFinalKey.getText().isEmpty()) {
 				lblWarning.setText("Please enter a valid key.");
 				txtKey.setText("");
+				lblFinalKey.setText("");
 				enteredKeyCode = DEFAULT_KEY_CODE;
 				return;
 			}
@@ -189,7 +206,7 @@ public class NewSoundDialog extends JPanel {
 			}
 			
 			// Add the sound to the interface
-			parentPanel.addNewSound(soundPath, enteredKeyCode, keyName, soundName, stoppable);
+			parentPanel.addSound(soundPath, enteredKeyCode, keyName, soundName, stoppable);
 			
 			// Close this window
 			containerFrame.dispose();
