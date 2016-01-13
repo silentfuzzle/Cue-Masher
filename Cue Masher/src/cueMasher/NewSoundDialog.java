@@ -120,32 +120,45 @@ public class NewSoundDialog extends JPanel {
 		btnCancel.setLocation(btnAddSound.getWidth()+20,140);
 		lblWarning.setLocation(btnAddSound.getWidth()+btnCancel.getWidth()+30,145);
 	}
+	
+	// Resets the key the user has entered to map a sound to
+	public void resetEnteredKey() {
+		txtKey.setText("");
+		lblFinalKey.setText("");
+		enteredKeyCode = DEFAULT_KEY_CODE;
+	}
 
 	// Saves the key code associated with the key to play the sound with
 	private class KeyCodeListener implements KeyListener {
 		public void keyPressed(KeyEvent e) {}
 		
 		public void keyReleased(KeyEvent e) {
-			int keyCode = e.getKeyCode();
 			String keyName = String.valueOf(e.getKeyChar());
 			String existingKeyName = txtKey.getText();
-			if (keyName.equalsIgnoreCase(existingKeyName) &&
-					keyCode != KeyEvent.VK_SPACE) {
-				enteredKeyCode = keyCode;
-				
-				// Set the final key name that will be displayed in the GUI
-				if (keyCode == KeyEvent.VK_NUMPAD0 || keyCode == KeyEvent.VK_NUMPAD1 ||
-						keyCode == KeyEvent.VK_NUMPAD2 || keyCode == KeyEvent.VK_NUMPAD3 ||
-						keyCode == KeyEvent.VK_NUMPAD4 || keyCode == KeyEvent.VK_NUMPAD5 ||
-						keyCode == KeyEvent.VK_NUMPAD6 || keyCode == KeyEvent.VK_NUMPAD7 ||
-						keyCode == KeyEvent.VK_NUMPAD8 || keyCode == KeyEvent.VK_NUMPAD9) {
-					keyName = "N" + keyName;
+			if (!e.isShiftDown())
+			{
+				int keyCode = e.getKeyCode();
+				if (keyName.equalsIgnoreCase(existingKeyName) &&
+						keyCode != KeyEvent.VK_SPACE) {
+					enteredKeyCode = keyCode;
+					
+					// Set the final key name that will be displayed in the GUI
+					if (keyCode == KeyEvent.VK_NUMPAD0 || keyCode == KeyEvent.VK_NUMPAD1 ||
+							keyCode == KeyEvent.VK_NUMPAD2 || keyCode == KeyEvent.VK_NUMPAD3 ||
+							keyCode == KeyEvent.VK_NUMPAD4 || keyCode == KeyEvent.VK_NUMPAD5 ||
+							keyCode == KeyEvent.VK_NUMPAD6 || keyCode == KeyEvent.VK_NUMPAD7 ||
+							keyCode == KeyEvent.VK_NUMPAD8 || keyCode == KeyEvent.VK_NUMPAD9) {
+						keyName = "N" + keyName;
+					}
+					lblFinalKey.setText(keyName);
 				}
-				lblFinalKey.setText(keyName);
+				else {
+					// The Spacebar isn't a valid key that sounds can be mapped to
+					txtKey.setText(txtKey.getText().trim());
+				}
 			}
-			else {
-				// The Spacebar isn't a valid key that sounds can be mapped to
-				txtKey.setText(txtKey.getText().trim());
+			else if (keyName.equalsIgnoreCase(existingKeyName)) {
+				resetEnteredKey();
 			}
 		}
 		
@@ -182,11 +195,9 @@ public class NewSoundDialog extends JPanel {
 			
 			// Make sure that a key has been entered
 			String keyName = lblFinalKey.getText();
-			if (enteredKeyCode == DEFAULT_KEY_CODE || lblFinalKey.getText().isEmpty()) {
+			if (enteredKeyCode == DEFAULT_KEY_CODE || lblFinalKey.getText().isEmpty() || !parentPanel.checkValidKey(keyName)) {
 				lblWarning.setText("Please enter a valid key.");
-				txtKey.setText("");
-				lblFinalKey.setText("");
-				enteredKeyCode = DEFAULT_KEY_CODE;
+				resetEnteredKey();
 				return;
 			}
 			

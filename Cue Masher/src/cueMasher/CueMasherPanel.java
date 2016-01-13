@@ -5,9 +5,7 @@ package cueMasher;
 
 import java.awt.*;
 import java.awt.event.*;
-import javax.sound.sampled.*;
 import javax.swing.*;
-import java.io.*;
 import java.util.*;
 
 //The main panel
@@ -20,6 +18,9 @@ public class CueMasherPanel extends JPanel {
 	private final int BUTTON_SPACE = 10;	//The space to leave between buttons and the edge of the screen
 	private int[] buttonWidth;
 	private int buttonHeight;
+	
+	//These strings determine where to place the buttons based on the key the user presses to play the sound
+	private String[] rows = {"`1234567890-=", "qwertyuiop[]\\", "asdfghjkl;\'", "zxcvbnm<./", "1234567890"};
 	
 	private ArrayList<BoardButton> soundList;	//Holds the list of objects containing the sounds and other information
 	private ProjectFileManager soundManager;
@@ -73,6 +74,23 @@ public class CueMasherPanel extends JPanel {
 			addSound(readSounds[s]);
 		}
 	}
+	
+	// Returns whether the given key name is valid
+	// keyName - The name of the key the user is attempting to map to a new sound
+	public boolean checkValidKey(String keyName) {
+		// For numpad keys, remove the "N" placed before the key name first before checking its existence
+		if (keyName.indexOf("N") != -1) {
+			keyName = keyName.substring(1);
+		}
+		
+		// Check if the key is in the list of acceptable keys
+		for (int j=0; j < rows.length; j++) {
+			int index = rows[j].indexOf(keyName);
+			if (index != -1)
+				return true;
+		}
+		return false;
+	}
 
 	// Add a sound to the displayed buttons, sound list, and sound file
 	// soundPath - The path to the sound file on the file system
@@ -111,10 +129,6 @@ public class CueMasherPanel extends JPanel {
 	//Set the positions and sizes of the buttons and display the panel
 	public void paintComponent(Graphics page) {
 		super.paintComponent(page);
-		
-		//These strings determine where to place the button based on the key the user presses to play the sound
-		//The end layout will be similar to the center part of the keyboard
-		String[] rows = {"`1234567890-=", "qwertyuiop[]\\", "asdfghjkl;\'", "zxcvbnm<./", "1234567890"};
 		
 		int xPos;
 		int yPos;
