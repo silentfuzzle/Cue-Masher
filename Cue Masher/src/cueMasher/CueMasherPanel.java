@@ -5,10 +5,11 @@ package cueMasher;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import javax.swing.*;
 import java.util.*;
 
-//The main panel
+//This class defines the main Cue Masher GUI.
 public class CueMasherPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
@@ -22,12 +23,14 @@ public class CueMasherPanel extends JPanel {
 	//These strings determine where to place the buttons based on the key the user presses to play the sound
 	private String[] rows = {"`1234567890-=", "qwertyuiop[]\\", "asdfghjkl;\'", "zxcvbnm<./", "1234567890"};
 	
+	private CueMasherFrame frame;
 	private ArrayList<BoardButton> soundList;	//Holds the list of objects containing the sounds and other information
 	private ProjectFileManager soundManager;
 	private BoardButton space;
 	
 	//Constructor
-	public CueMasherPanel() {
+	// frame - The frame containing this panel
+	public CueMasherPanel(CueMasherFrame frame) {
 		//Listens to the keyboard
 		addKeyListener(new ToggleSound());
 		//Panel is always in focus so the key listener works
@@ -42,6 +45,7 @@ public class CueMasherPanel extends JPanel {
 		buttonWidth[4] = (SCREEN_WIDTH-(BUTTON_SPACE*10))/10;
 		buttonHeight = (SCREEN_HEIGHT-(BUTTON_SPACE*7))/6;
 		
+		this.frame = frame;
 		soundList = new ArrayList<BoardButton>();
 		soundManager = new ProjectFileManager();
 
@@ -53,7 +57,7 @@ public class CueMasherPanel extends JPanel {
 	
 	// Set the buttons displayed in the panel
 	// textFilePath - The path to the sound effect definition file
-	public void populatePanelFromTextFile(String textFilePath) {
+	public void loadFile(String textFilePath) {
 		
 		// Remove all the old buttons and refresh the panel
 		for (int i=0; i < soundList.size(); i++) {
@@ -67,12 +71,52 @@ public class CueMasherPanel extends JPanel {
 		soundList = new ArrayList<BoardButton>();
 		
 		// Get the sounds contained in the given project file
-		SoundInfo[] readSounds = soundManager.readFile(textFilePath);
+		ArrayList<SoundInfo> readSounds = soundManager.readFile(textFilePath);
 		
 		// Add buttons to the interface for each sound in the file
-		for (int s=0; s < readSounds.length; s++) {
-			addSound(readSounds[s]);
+		for (int s=0; s < readSounds.size(); s++) {
+			addSound(readSounds.get(s));
 		}
+	}
+	
+	// Save the open project if needed
+	public boolean saveFile() {
+		if (!soundManager.isProjectOpen()) {
+			// The open project hasn't been saved to a file yet
+			// Have the user select a location and file name
+			JFileChooser fileChooser = new JFileChooser();
+			fileChooser.setFileFilter(new CueFileFilter());
+			int choice = fileChooser.showSaveDialog(CueMasherPanel.this);
+			
+			if (choice == JFileChooser.APPROVE_OPTION) {
+				// Get the name of the file the user selected
+				File file = fileChooser.getSelectedFile();
+				String filePath = file.getAbsolutePath().trim();
+				
+				// Make sure that it has a Cue Masher file extension
+				String cueMasherExt = CueFileFilter.CUE_MASHER_FILE_EXT;
+				boolean addExt = false;
+				if (filePath.length() < cueMasherExt.length())
+					addExt = true;
+				else {
+					String ext = filePath.substring(filePath.length()-cueMasherExt.length(), filePath.length());
+					if (!ext.equalsIgnoreCase(cueMasherExt))
+						addExt = true;
+				}
+				
+				// Add the cue masher file extension if it doesn't exist
+				if (addExt)
+					filePath = filePath + cueMasherExt;
+				
+				// Save the project to the selected file
+				soundManager.setProjectFilePath(filePath);
+				return soundManager.saveFile();
+			}
+		}
+		else {
+			return soundManager.saveFile();
+		}
+		return false;
 	}
 	
 	// Returns whether the given key name is valid
@@ -108,6 +152,7 @@ public class CueMasherPanel extends JPanel {
 			addSound(newSound);
 
 			// Display the new button in the GUI
+			frame.setProjectModified();
 			revalidate();
 	        repaint();
 		}

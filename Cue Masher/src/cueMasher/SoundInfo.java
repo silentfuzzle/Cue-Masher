@@ -108,6 +108,14 @@ public class SoundInfo {
 	public void setStoppable(int stoppable) {
 		this.stoppable = (stoppable != 0);
 	}
+	
+	// Gets an integer representing whether this sound is stoppable
+	public int getStoppable() {
+		if (stoppable)
+			return 1;
+		else
+			return 0;
+	}
 
 	//Play the sound if it is playable
 	public void play() {
@@ -121,5 +129,10 @@ public class SoundInfo {
 	public void stop() {
 		if (stoppable && sound != null)
 			sound.stop();
+	}
+	
+	// Stops and disposes of the sound player
+	public void close() {
+		sound.close();
 	}
 }

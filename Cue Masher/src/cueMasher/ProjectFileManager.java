@@ -3,16 +3,13 @@
 
 package cueMasher;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
 
 // This class manages the open project file.
 public class ProjectFileManager {
 	private HashMap<Integer, SoundInfo> soundList;	//Holds the current list of sounds in the open project
 	private boolean projectModified;
+	private CSVReaderWriter projectFileIO = null;
 	
 	// Constructor
 	public ProjectFileManager() {
@@ -20,43 +17,55 @@ public class ProjectFileManager {
 		projectModified = false;
 	}
 	
+	// Returns if a project file is open
+	public boolean isProjectOpen() {
+		return (projectFileIO != null);
+	}
+	
+	// Sets the project file path
+	// textFilePath - The path to the project file
+	public void setProjectFilePath(String textFilePath) {
+		projectFileIO = new CSVReaderWriter(textFilePath);
+	}
+	
 	// Read the given project file and create objects from it in memory
-	public SoundInfo[] readFile(String textFilePath) {
-		soundList = new HashMap<Integer, SoundInfo>();
+	// textFilePath - The project file to open and read
+	public ArrayList<SoundInfo> readFile(String textFilePath) {
 		
-		//Attempt to get the text file of information and initial the sounds
-		try {
-			//Get the file and a Scanner to look through it
-			File soundPaths = new File(textFilePath);
-			Scanner scanSoundPathDoc = new Scanner(soundPaths);
-			
-			//Create another scanner to parse each line of the text file
-			Scanner scanLine = new Scanner("");
-			//Parse each line in the text file
-			while(scanSoundPathDoc.hasNextLine()) {
-				scanLine = new Scanner(scanSoundPathDoc.nextLine());
-				//File is delimited with CSV format
-				scanLine.useDelimiter(",");
-				
-				addSound(scanLine.next(),scanLine.nextInt(),scanLine.next(),scanLine.next(),scanLine.nextInt());
-			}
-		} catch (FileNotFoundException e) {
-			System.out.println("Not found");
-		}
-		
-		projectModified = false;
-		
-		// Return an array of the sound objects that were added from the text file
-		SoundInfo[] readSounds = new SoundInfo[soundList.size()];
+		// Dispose of all the sound objects in the project that is currently open
 		Collection<SoundInfo> sounds = soundList.values();
-		
-		int s = 0;
         for(SoundInfo sound: sounds){
-            readSounds[s] = sound;
-            s++;
+            sound.close();
         }
         
+        // Set the newly opened project variables
+		soundList = new HashMap<Integer, SoundInfo>();
+		setProjectFilePath(textFilePath);
+		projectModified = false;
+		
+		// Read the project file and save its contents to memory
+		ArrayList<SoundInfo> readSounds = projectFileIO.readFile();
+		for (int s=0; s < readSounds.size(); s++) {
+			SoundInfo currSound = readSounds.get(s);
+			int keyCode = currSound.getKeyCode();
+			
+			if (!soundList.containsKey(keyCode)) {
+				soundList.put(keyCode, currSound);
+			}
+		}
+		
         return readSounds;
+	}
+	
+	// Saves the open project to the project file if needed
+	public boolean saveFile() {
+		if (isProjectOpen() && projectModified) {
+			boolean written = projectFileIO.writeFile(soundList.values());
+			if (written)
+				projectModified = false;
+			return written;
+		}
+		return false;
 	}
 	
 	// Add a sound to the open project in memory
