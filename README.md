@@ -20,7 +20,7 @@ I've worked on Cue Masher off and on as I've found bugs and needed features for 
 
 ### High Priority
 
-* Needs a New option to start a new project.
+* Needs a warning message for users if they haven't saved their project before closing it.
 * Needs ability to edit and delete sounds.
 * Needs a GUI to modify or delete existing sounds.
 * Needs a new text file format such as XML so that commas in sound file paths don't cause problems.

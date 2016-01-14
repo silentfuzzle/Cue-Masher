@@ -28,10 +28,9 @@ public class ProjectFileManager {
 		projectFileIO = new CSVReaderWriter(textFilePath);
 	}
 	
-	// Read the given project file and create objects from it in memory
-	// textFilePath - The project file to open and read
-	public ArrayList<SoundInfo> readFile(String textFilePath) {
-		
+	// Stops and disposes of sounds and clears sound list for new project
+	public void openNewProject() {
+
 		// Dispose of all the sound objects in the project that is currently open
 		Collection<SoundInfo> sounds = soundList.values();
         for(SoundInfo sound: sounds){
@@ -40,8 +39,16 @@ public class ProjectFileManager {
         
         // Set the newly opened project variables
 		soundList = new HashMap<Integer, SoundInfo>();
-		setProjectFilePath(textFilePath);
 		projectModified = false;
+		projectFileIO = null;
+	}
+	
+	// Read the given project file and create objects from it in memory
+	// textFilePath - The project file to open and read
+	public ArrayList<SoundInfo> readFile(String textFilePath) {
+		
+		openNewProject();
+		setProjectFilePath(textFilePath);
 		
 		// Read the project file and save its contents to memory
 		ArrayList<SoundInfo> readSounds = projectFileIO.readFile();

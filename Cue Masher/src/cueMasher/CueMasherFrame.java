@@ -31,6 +31,10 @@ public class CueMasherFrame extends JFrame {
 		JMenu menu = new JMenu("File");
 		cueMasherMenu.add(menu);
 		
+		JMenuItem newFile = new JMenuItem("New");
+		newFile.addActionListener(new NewListener());
+		menu.add(newFile);
+		
 		JMenuItem openFile = new JMenuItem("Open");
 		openFile.addActionListener(new OpenListener());
 		menu.add(openFile);
@@ -53,6 +57,13 @@ public class CueMasherFrame extends JFrame {
 	// Sets the save label to indicate that the project has been modified
 	public void setProjectModified() {
 		saveFile.setText(SAVE_MOD);
+	}
+	
+	// Creates a new project
+	private class NewListener implements ActionListener {
+		public void actionPerformed(ActionEvent event) {
+			panel.openNewProject();
+		}
 	}
 	
 	// Defines how the Open File menu item behaves when selected

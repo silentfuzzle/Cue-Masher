@@ -55,20 +55,16 @@ public class CueMasherPanel extends JPanel {
 		add(btnSpace);
 	}
 	
+	// Clears the buttons and sounds for a new project
+	public void openNewProject() {
+		clearBoard();
+		soundManager.openNewProject();
+	}
+	
 	// Set the buttons displayed in the panel
 	// textFilePath - The path to the sound effect definition file
 	public void loadFile(String textFilePath) {
-		
-		// Remove all the old buttons and refresh the panel
-		for (int i=0; i < soundList.size(); i++) {
-			BoardButton curr = soundList.get(i);
-			remove(curr.getButton());
-		}
-		revalidate();
-        repaint();
-
-        // Refresh the list of sound board buttons
-		soundList = new ArrayList<BoardButton>();
+		clearBoard();
 		
 		// Get the sounds contained in the given project file
 		ArrayList<SoundInfo> readSounds = soundManager.readFile(textFilePath);
@@ -169,6 +165,21 @@ public class CueMasherPanel extends JPanel {
 		//Add the new sound button to the list of buttons and the panel
 		soundList.add(buttonContainer);
 		add(btnSound);
+	}
+	
+	// Clears all the buttons from the GUI
+	private void clearBoard() {
+
+		// Remove all the old buttons and refresh the panel
+		for (int i=0; i < soundList.size(); i++) {
+			BoardButton curr = soundList.get(i);
+			remove(curr.getButton());
+		}
+		revalidate();
+        repaint();
+
+        // Refresh the list of sound board buttons
+		soundList = new ArrayList<BoardButton>();
 	}
 	
 	//Set the positions and sizes of the buttons and display the panel
