@@ -42,30 +42,39 @@ public class CueMasherFrame extends JFrame {
 		panel = new CueMasherPanel(this);
 		this.getContentPane().add(panel);
 		
-		// Create the file menu
+		// Create the menu bar
 		JMenuBar cueMasherMenu = new JMenuBar();
-		JMenu menu = new JMenu("File");
-		cueMasherMenu.add(menu);
+
+		// Create the file menu
+		JMenu fileMenu = new JMenu("File");
+		cueMasherMenu.add(fileMenu);
 		
 		JMenuItem newFile = new JMenuItem("New");
 		newFile.addActionListener(new NewListener());
-		menu.add(newFile);
+		fileMenu.add(newFile);
 		
 		JMenuItem openFile = new JMenuItem("Open");
 		openFile.addActionListener(new OpenListener());
-		menu.add(openFile);
+		fileMenu.add(openFile);
 		
 		saveFile = new JMenuItem(SAVE_MOD);
 		saveFile.addActionListener(new SaveListener());
-		menu.add(saveFile);
-
-		JMenuItem newSound = new JMenuItem("Add Sound...");
-		newSound.addActionListener(new AddSoundListener());
-		menu.add(newSound);
+		fileMenu.add(saveFile);
 		
 		JMenuItem quit = new JMenuItem("Quit");
 		quit.addActionListener(new QuitListener());
-		menu.add(quit);
+		fileMenu.add(quit);
+		
+		// Create the edit menu
+		JMenu editMenu = new JMenu("Edit");
+		cueMasherMenu.add(editMenu);
+
+		JMenuItem newSound = new JMenuItem("Add Sound...");
+		newSound.addActionListener(new AddSoundListener());
+		editMenu.add(newSound);
+		
+		/*JCheckBoxMenuItem editingMode = new JCheckBoxMenuItem("Editing mode");
+		editMenu.add(editingMode);*/
 		
 		setJMenuBar(cueMasherMenu);
 	}
@@ -150,11 +159,7 @@ public class CueMasherFrame extends JFrame {
 	// Adds a new sound to the open project when the user selects the Add Sound option in the File Menu
 	private class AddSoundListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
-			JFrame selectDialog = new JFrame("Add Sound");
-			selectDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-			selectDialog.getContentPane().add(new NewSoundDialog(selectDialog, panel));
-			selectDialog.pack();
-			selectDialog.setVisible(true);
+			panel.getDialogManager().displayNewSoundDialog();
 		}
 	}
 	

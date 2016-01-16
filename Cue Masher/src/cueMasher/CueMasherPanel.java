@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import javax.swing.*;
+
 import java.util.*;
 
 //This class defines the main Cue Masher GUI.
@@ -24,8 +25,10 @@ public class CueMasherPanel extends JPanel {
 	private String[] rows = {"`1234567890-=", "qwertyuiop[]\\", "asdfghjkl;\'", "zxcvbnm<./", "1234567890"};
 	
 	private CueMasherFrame frame;
-	private ArrayList<BoardButton> soundList;	//Holds the list of objects containing the sounds and other information
 	private ProjectFileManager soundManager;
+	private SoundDialogManager dialogManager;
+	
+	private ArrayList<BoardButton> soundList;	//Holds the list of objects containing the sounds and other information
 	private BoardButton space;
 	
 	//Constructor
@@ -53,6 +56,13 @@ public class CueMasherPanel extends JPanel {
 		JButton btnSpace = new JButton("Stop (" + SPACEBAR + ")");
 		space = new StopButton(soundManager, btnSpace);
 		add(btnSpace);
+		
+		dialogManager = new SoundDialogManager(this);
+	}
+	
+	// Returns the object that manages all New/Edit Sound dialog boxes
+	public SoundDialogManager getDialogManager() {
+		return dialogManager;
 	}
 	
 	// Clears the buttons and sounds for a new project
@@ -131,6 +141,29 @@ public class CueMasherPanel extends JPanel {
 		}
 		return false;
 	}
+	
+	// Removes a sound from the interface and sound list
+	// keyCode - The keyboard key code associated with the sound
+	public void deleteSound(int keyCode) {
+		soundManager.deleteSound(keyCode);
+		
+		// Search the sound buttons for the button to remove
+		for (int s=0; s < soundList.size(); s++) {
+			BoardButton button = soundList.get(s);
+			if (button.getKeyCode() == keyCode) {
+				// Remove the button from the interface
+				remove(button.getButton());
+				soundList.remove(keyCode);
+
+				// Update the GUI
+				frame.setProjectModified();
+				revalidate();
+		        repaint();
+		        
+		        break;
+			}
+		}
+	}
 
 	// Add a sound to the displayed buttons, sound list, and sound file
 	// soundPath - The path to the sound file on the file system
@@ -160,7 +193,7 @@ public class CueMasherPanel extends JPanel {
 		
 		//Create a button for the sound
 		JButton btnSound = new JButton(soundInfo.getSoundName() + " (" + soundInfo.getKeyName() + ")");
-		SoundButton buttonContainer = new SoundButton(soundInfo, btnSound);
+		SoundButton buttonContainer = new SoundButton(dialogManager, soundInfo, btnSound);
         
 		//Add the new sound button to the list of buttons and the panel
 		soundList.add(buttonContainer);
@@ -251,8 +284,17 @@ public class CueMasherPanel extends JPanel {
 				// Stop all stoppable sounds
 				soundManager.stopSounds();
 			else {
-				// Play the associated sound
-				soundManager.playSound(e.getKeyCode());
+				if (dialogManager.getEditingMode()) {
+					// In editing mode, open the sound in the Edit Sound dialog box
+					SoundInfo sound = soundManager.getSound(e.getKeyCode());
+					if (sound != null) {
+						dialogManager.displayEditSoundDialog(sound);
+					}
+				}
+				else {
+					// Otherwise, play the associated sound
+					soundManager.playSound(e.getKeyCode());
+				}
 			}
 		}
 		

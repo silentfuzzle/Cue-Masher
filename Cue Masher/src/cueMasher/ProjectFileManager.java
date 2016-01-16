@@ -111,6 +111,27 @@ public class ProjectFileManager {
 		}
 	}
 	
+	// Delete the sound with the given key code if it exists
+	// keyCode - The keyboard key code associated with the sound to delete
+	public void deleteSound(int keyCode) {
+		if (soundList.containsKey(keyCode)) {
+			SoundInfo sound = soundList.get(keyCode);
+			sound.close();
+			soundList.remove(keyCode);
+			projectModified = true;
+		}
+	}
+	
+	// Returns the sound associated with the given keycode if it exists
+	// keyCode - The keyboard key code associated with the sound to get
+	public SoundInfo getSound(int keyCode) {
+		SoundInfo sound = null;
+		if (soundList.containsKey(keyCode)) {
+			sound = soundList.get(keyCode);
+		}
+		return sound;
+	}
+	
 	// Plays the sound associated with the given keyboard key code
 	public void playSound(int keyCode) {
 		if (soundList.containsKey(keyCode)) {

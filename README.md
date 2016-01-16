@@ -20,15 +20,16 @@ I've worked on Cue Masher off and on as I've found bugs and needed features for 
 
 ### High Priority
 
-* Needs a warning message for users if they haven't saved their project before closing it.
 * Needs ability to edit and delete sounds.
 * Needs a GUI to modify or delete existing sounds.
 * Needs a new text file format such as XML so that commas in sound file paths don't cause problems.
 * Needs to handle missing sound files nicer.
 * Needs an executable to run outside an IDE.
 * Needs to handle project files with invalid formats.
+* Needs to handle a wider range of screen resolutions.
 * Sounds should not be playing while editing projects.
 * A bug that causes a sound effect to loop indefinitely when one or more keys are pressed quickly at the same time needs to be fixed.
+* Needs better code organization.
 
 ### Low Priority
 

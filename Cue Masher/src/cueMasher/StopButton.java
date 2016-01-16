@@ -3,8 +3,7 @@
 
 package cueMasher;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 
 import javax.swing.JButton;
 
@@ -23,6 +22,11 @@ public class StopButton extends BoardButton {
 	// Returns the name of the button that stops all stoppable sounds
 	public String getKeyName() {
 		return CueMasherPanel.SPACEBAR;
+	}
+	
+	// Returns the key code of the keyboard key that stops all stoppable sounds
+	public int getKeyCode() {
+		return KeyEvent.VK_SPACE;
 	}
 
 	// Returns an action listener that stops all sounds to apply to the GUI button

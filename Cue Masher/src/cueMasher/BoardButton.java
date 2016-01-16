@@ -27,6 +27,9 @@ public abstract class BoardButton {
 	// Returns the name of the keyboard key associated with this button
 	public abstract String getKeyName();
 	
+	// Returns the key code of the keyboard key associated with this button
+	public abstract int getKeyCode();
+	
 	// Returns the action listener to add to the GUI button
 	protected abstract ActionListener getActionListener();
 }

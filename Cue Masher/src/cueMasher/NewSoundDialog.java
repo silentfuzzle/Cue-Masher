@@ -21,14 +21,48 @@ public class NewSoundDialog extends JPanel {
 	private CueMasherPanel parentPanel;
 	private JFileChooser fileChooser;
 	
-	private JButton btnSelectSound, btnAddSound, btnCancel;
+	private JButton btnSelectSound, btnAddSound, btnDeleteSound, btnCancel;
 	private JLabel lblKey, lblFinalKey, lblName, lblWarning;
 	private JTextField txtSoundPath, txtKey, txtSoundName;
 	private JCheckBox cbxStoppable;
+	private SoundInfo soundInfo;
 	
 	private int enteredKeyCode = DEFAULT_KEY_CODE;
 	
-	// Constructor
+	// Constructor for editing an existing sound
+	// f - The frame containing this panel
+	// mainPanel - The main interface
+	// soundInfo - The sound being edited
+	public NewSoundDialog(JFrame f, CueMasherPanel mainPanel, SoundInfo soundInfo) {
+		this(f, mainPanel);
+		
+		btnAddSound.setText("Apply Changes");
+		
+		// Define the button to remove the sound from the board
+		btnDeleteSound = new JButton("Delete");
+		btnDeleteSound.addActionListener(new DeleteListener());
+		add(btnDeleteSound);
+		
+		// Display the current information about the sound being edited
+		txtSoundPath.setText(soundInfo.getPath());
+		this.enteredKeyCode = soundInfo.getKeyCode();
+		
+		String keyName = soundInfo.getKeyName();
+		if (keyName.length() > 1)
+			txtKey.setText(keyName.substring(1));
+		else
+			txtKey.setText(keyName);
+		lblFinalKey.setText(keyName);
+		
+		txtSoundName.setText(soundInfo.getSoundName());
+		if (soundInfo.getStoppable() != 0) {
+			cbxStoppable.setSelected(true);
+		}
+		
+		this.soundInfo = soundInfo;
+	}
+	
+	// Constructor for creating a new sound
 	// f - The frame containing this panel
 	// mainPanel - The main interface
 	public NewSoundDialog(JFrame f, CueMasherPanel mainPanel) {
@@ -36,6 +70,15 @@ public class NewSoundDialog extends JPanel {
 		int height = 172;
 		setPreferredSize(new Dimension(width,height));
 		f.setMinimumSize(new Dimension(width+5,height+30));
+		
+
+		// Inform the sound dialog manager that this dialog box is closing before closing it
+		f.addWindowListener(new WindowAdapter() {
+		    @Override
+		    public void windowClosing(WindowEvent windowEvent) {
+		        closeFrame();
+		    }
+		});
 		
 		containerFrame = f;
 		parentPanel = mainPanel;
@@ -50,7 +93,7 @@ public class NewSoundDialog extends JPanel {
 		add(btnSelectSound);
 		
 		// Define the button to add the sound to the sound board
-		btnAddSound = new JButton("Add Sound");
+		btnAddSound = new JButton("Add");
 		btnAddSound.addActionListener(new UpdateSoundListener());
 		add(btnAddSound);
 		
@@ -71,7 +114,7 @@ public class NewSoundDialog extends JPanel {
 		// Define explanatory labels
 		lblKey = new JLabel("Cue key:");
 		add(lblKey);
-		lblFinalKey = new JLabel("Key");
+		lblFinalKey = new JLabel("");
 		add(lblFinalKey);
 		lblName = new JLabel("Sound name:");
 		add(lblName);
@@ -117,8 +160,18 @@ public class NewSoundDialog extends JPanel {
 		//loop.setLocation(102, 106);
 		
 		btnAddSound.setLocation(10,140);
-		btnCancel.setLocation(btnAddSound.getWidth()+20,140);
-		lblWarning.setLocation(btnAddSound.getWidth()+btnCancel.getWidth()+30,145);
+		if (btnDeleteSound != null) {
+			// This dialog box is in editing mode
+			// Make sure there is room for the Delete button
+			btnDeleteSound.setLocation(btnAddSound.getWidth()+20,140);
+			btnCancel.setLocation(btnAddSound.getWidth()+btnDeleteSound.getWidth()+30,140);
+			lblWarning.setLocation(btnAddSound.getWidth()+btnDeleteSound.getWidth()+btnCancel.getWidth()+40,145);
+		}
+		else {
+			// A new sound is being defined, the delete button isn't needed
+			btnCancel.setLocation(btnAddSound.getWidth()+20,140);
+			lblWarning.setLocation(btnAddSound.getWidth()+btnCancel.getWidth()+30,145);
+		}
 	}
 	
 	// Resets the key the user has entered to map a sound to
@@ -126,6 +179,12 @@ public class NewSoundDialog extends JPanel {
 		txtKey.setText("");
 		lblFinalKey.setText("");
 		enteredKeyCode = DEFAULT_KEY_CODE;
+	}
+	
+	// Inform the sound dialog manager that this dialog box is closing and close it
+	public void closeFrame() {
+		parentPanel.getDialogManager().closeSoundDialog(this);
+		containerFrame.dispose();
 	}
 
 	// Saves the key code associated with the key to play the sound with
@@ -216,18 +275,31 @@ public class NewSoundDialog extends JPanel {
 				stoppable = 1;
 			}
 			
-			// Add the sound to the interface
+			// The user has changed what key is used to play the sound being edited
+			// Remove the current key from the sound board
+			if (soundInfo != null && enteredKeyCode != soundInfo.getKeyCode()) {
+				parentPanel.deleteSound(soundInfo.getKeyCode());
+			}
+			
+			// Add or update the sound in the interface
 			parentPanel.addSound(soundPath, enteredKeyCode, keyName, soundName, stoppable);
 			
-			// Close this window
-			containerFrame.dispose();
+			closeFrame();
+		}
+	}
+	
+	// Delete this sound from the interface and sound list
+	private class DeleteListener implements ActionListener {
+		public void actionPerformed(ActionEvent event) {
+			parentPanel.deleteSound(soundInfo.getKeyCode());
+			closeFrame();
 		}
 	}
 	
 	// Close the dialog box without saving the user's changes
 	private class CancelListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
-			containerFrame.dispose();
+			closeFrame();
 		}
 	}
 }
