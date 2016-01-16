@@ -15,9 +15,14 @@ public class SoundButton extends BoardButton {
 	// dialogManager - The object that manages all New/Edit Sound Dialog boxes
 	// soundInfo - The information about the sound this button plays
 	public SoundButton(SoundDialogManager dialogManager, SoundInfo soundInfo) {
-		super(soundInfo.getSoundName(), soundInfo.getKeyName());
 		this.dialogManager = dialogManager;
 		this.soundInfo = soundInfo;
+		updateButtonText();
+	}
+
+	// Returns the name of the sound that this button plays
+	public String getSoundName() {
+		return soundInfo.getSoundName();
 	}
 	
 	// Returns the name of the keyboard key that plays the sound

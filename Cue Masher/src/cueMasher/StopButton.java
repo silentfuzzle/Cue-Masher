@@ -14,8 +14,13 @@ public class StopButton extends BoardButton {
 	// Constructor
 	// manager - The project manager object
 	public StopButton(ProjectFileManager manager) {
-		super("Stop", SPACEBAR);
 		this.manager = manager;
+		updateButtonText();
+	}
+
+	// Returns the action this button performs
+	public String getSoundName() {
+		return "Stop";
 	}
 	
 	// Returns the name of the button that stops all stoppable sounds

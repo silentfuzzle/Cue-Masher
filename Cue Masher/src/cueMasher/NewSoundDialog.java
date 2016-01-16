@@ -15,7 +15,6 @@ public class NewSoundDialog extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
 	private String DEFAULT_SOUND_PATH = "Select a sound";
-	private int DEFAULT_KEY_CODE = -1;
 	
 	private JFrame containerFrame;
 	private CueMasherPanel parentPanel;
@@ -27,7 +26,7 @@ public class NewSoundDialog extends JPanel {
 	private JCheckBox cbxStoppable;
 	private SoundInfo soundInfo;
 	
-	private int enteredKeyCode = DEFAULT_KEY_CODE;
+	private int enteredKeyCode = SoundInfo.DEFAULT_KEY_CODE;
 	
 	// Constructor for editing an existing sound
 	// f - The frame containing this panel
@@ -38,28 +37,32 @@ public class NewSoundDialog extends JPanel {
 		
 		btnAddSound.setText("Apply Changes");
 		
-		// Define the button to remove the sound from the board
-		btnDeleteSound = new JButton("Delete");
-		btnDeleteSound.addActionListener(new DeleteListener());
-		add(btnDeleteSound);
-		
+		if (soundInfo.getKeyCode() != -1) {
+			// This existing sound is associated with a key
+			
+			// Define the button to remove the sound from the board
+			btnDeleteSound = new JButton("Delete");
+			btnDeleteSound.addActionListener(new DeleteListener());
+			add(btnDeleteSound);
+			
+			// Display the information about the key associated with the sound
+			this.enteredKeyCode = soundInfo.getKeyCode();
+			String keyName = soundInfo.getKeyName();
+			if (keyName.length() > 1)
+				txtKey.setText(keyName.substring(1));
+			else
+				txtKey.setText(keyName);
+			lblFinalKey.setText(keyName);
+			
+			this.soundInfo = soundInfo;
+		}
+
 		// Display the current information about the sound being edited
 		setPath(soundInfo.getPath());
-		this.enteredKeyCode = soundInfo.getKeyCode();
-		
-		String keyName = soundInfo.getKeyName();
-		if (keyName.length() > 1)
-			txtKey.setText(keyName.substring(1));
-		else
-			txtKey.setText(keyName);
-		lblFinalKey.setText(keyName);
-		
 		txtSoundName.setText(soundInfo.getSoundName());
 		if (soundInfo.getStoppable() != 0) {
 			cbxStoppable.setSelected(true);
 		}
-		
-		this.soundInfo = soundInfo;
 	}
 	
 	// Constructor for creating a new sound
@@ -183,7 +186,7 @@ public class NewSoundDialog extends JPanel {
 	public void resetEnteredKey() {
 		txtKey.setText("");
 		lblFinalKey.setText("");
-		enteredKeyCode = DEFAULT_KEY_CODE;
+		enteredKeyCode = SoundInfo.DEFAULT_KEY_CODE;
 	}
 	
 	// Brings this dialog into focus
@@ -269,7 +272,7 @@ public class NewSoundDialog extends JPanel {
 			
 			// Make sure that a key has been entered
 			String keyName = lblFinalKey.getText();
-			if (enteredKeyCode == DEFAULT_KEY_CODE || lblFinalKey.getText().isEmpty() || !parentPanel.checkValidKey(keyName)) {
+			if (enteredKeyCode == SoundInfo.DEFAULT_KEY_CODE || lblFinalKey.getText().isEmpty() || !parentPanel.checkValidKey(keyName)) {
 				lblWarning.setText("Please enter a valid key.");
 				resetEnteredKey();
 				return;
@@ -290,6 +293,44 @@ public class NewSoundDialog extends JPanel {
 				stoppable = 1;
 			}
 			
+			// Check if the key the user has selected is already associated with a sound
+			SoundInfo existingSound = parentPanel.getSound(enteredKeyCode);
+			if (existingSound != null) {
+				// Ask the user to resolve the conflict
+				Object[] options = new Object[] {"Replace",
+		                    "Replace and Edit",
+		                    "Cancel"};
+				int n = JOptionPane.showOptionDialog(
+					    containerFrame,
+					    "You've selected a key that is already associated with a sound. What would you like to do?",
+					    "Resolve Key Conflict",
+					    JOptionPane.YES_NO_CANCEL_OPTION,
+					    JOptionPane.WARNING_MESSAGE,
+					    null, options, options[2]);
+				
+				if (n == 0) {
+					// The other key and sound is being replaced
+					// Make sure the sound associated with the other key isn't displayed in another sound dialog
+					parentPanel.getDialogManager().closeSoundDialog(existingSound.getKeyCode());
+				}
+				else if (n == 1) {
+					// The other key is being replaced while allowing the user to assign a new key to its current sound
+					// Make sure the sound associated with the other key isn't displayed in another sound dialog
+					parentPanel.getDialogManager().closeSoundDialog(existingSound.getKeyCode());
+					
+					// Copy the sound to a dummy object and display it in a new Edit Sound dialog
+					SoundInfo copy = new SoundInfo(existingSound.getPath(), 
+							SoundInfo.DEFAULT_KEY_CODE, "", 
+							existingSound.getSoundName(), 
+							existingSound.getStoppable());
+					parentPanel.getDialogManager().displayEditSoundDialog(copy);
+				}
+				else if (n == JOptionPane.CANCEL_OPTION || n == JOptionPane.CLOSED_OPTION) {
+					// The user canceled creating the sound
+					return;
+				}
+			}
+			
 			// The user has changed what key is used to play the sound being edited
 			// Remove the current key from the sound board
 			if (soundInfo != null && enteredKeyCode != soundInfo.getKeyCode()) {
@@ -297,7 +338,8 @@ public class NewSoundDialog extends JPanel {
 			}
 			
 			// Add or update the sound in the interface
-			parentPanel.addSound(soundPath, enteredKeyCode, keyName, soundName, stoppable);
+			SoundInfo soundClip = new SoundInfo(soundPath, enteredKeyCode, keyName, soundName, stoppable);
+			parentPanel.updateSound(soundClip);
 			
 			closeFrame();
 		}

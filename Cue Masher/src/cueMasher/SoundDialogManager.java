@@ -31,11 +31,19 @@ public class SoundDialogManager {
 	// dialog - The dialog box to remove from the open dialogs
 	// keyCode - The keyCode the Edit Sound dialog box is editing or -1 if it is a New Sound dialog box
 	public void closeSoundDialog(NewSoundDialog dialog, int keyCode) {
+		if (keyCode == SoundInfo.DEFAULT_KEY_CODE) {
+			openNewDialogs.remove(dialog);
+		}
+		else {
+			closeSoundDialog(keyCode);
+		}
+	}
+	
+	// Removes an Edit Sound dialog from the list if it exists
+	// keyCode - The keyboard key code associated with the dialog to remove
+	public void closeSoundDialog(int keyCode) {
 		if (openEditDialogs.containsKey(keyCode)) {
 			openEditDialogs.remove(keyCode);
-		}
-		else if (keyCode == -1) {
-			openNewDialogs.remove(dialog);
 		}
 	}
 	

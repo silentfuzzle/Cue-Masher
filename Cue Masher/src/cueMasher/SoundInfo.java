@@ -11,6 +11,8 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 //Stores a sound: its path, button, player, keycode, label, and associated information
 public class SoundInfo {
+	public static int DEFAULT_KEY_CODE = -1;
+	
 	private String path, keyName, soundName;
 	private int keyCode;
 	private PCMFilePlayer sound;
@@ -24,11 +26,11 @@ public class SoundInfo {
 	// soundName - The short name of the sound to display in the GUI
 	// stoppable - 1 if the sound can be stopped with the Spacebar, 0 if not
 	public SoundInfo(String soundPath, int keyCode, String keyName, String soundName, int stoppable) {
+		this.keyCode = keyCode;
 		setPath(soundPath);
 		setKeyName(keyName);
 		setSoundName(soundName);
 		setStoppable(stoppable);
-		this.keyCode = keyCode;
 	}
 
 	// Returns if all the information about this sound is equal to another sound's information
@@ -46,27 +48,31 @@ public class SoundInfo {
 	//Set where this sound is located on the hard drive
 	// path - The full path to the sound
 	public void setPath(String path) {
-		if (this.path == null || this.path.equalsIgnoreCase(path)) {
+		if (this.path == null || !this.path.equalsIgnoreCase(path)) {
 			this.path = path;
 			
 			// Close the open sound player
 			if (sound != null)
 				sound.close();
 
-	        //Create the player that will stop, play and reset the sound file
-			File soundFile = new File(this.path);
-			try {
-				PCMFilePlayer clip = new PCMFilePlayer(soundFile);
-	            sound = clip;
-			} catch (IOException e) {
-				e.printStackTrace();
-				sound = null;
-			} catch (UnsupportedAudioFileException e) {
-				e.printStackTrace();
-				sound = null;
-			} catch (LineUnavailableException e) {
-				e.printStackTrace();
-				sound = null;
+			// Don't create the sound player if this is a dummy object
+			if (keyCode != DEFAULT_KEY_CODE) {
+				
+		        //Create the player that will stop, play and reset the sound file
+				File soundFile = new File(this.path);
+				try {
+					PCMFilePlayer clip = new PCMFilePlayer(soundFile);
+		            sound = clip;
+				} catch (IOException e) {
+					e.printStackTrace();
+					sound = null;
+				} catch (UnsupportedAudioFileException e) {
+					e.printStackTrace();
+					sound = null;
+				} catch (LineUnavailableException e) {
+					e.printStackTrace();
+					sound = null;
+				}
 			}
 		}
 	}

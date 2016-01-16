@@ -12,12 +12,8 @@ public abstract class BoardButton {
 	private JButton button;
 	
 	// Constructor
-	// soundName - The name of the board button
-	// keyName - The keyboard key name that toggles this board button
-	public BoardButton(String soundName, String keyName) {
-		String text = soundName + " (" + keyName + ")";
-		this.button = new JButton(text);
-		this.button.setToolTipText(text);
+	public BoardButton() {
+		this.button = new JButton("");
 		this.button.addActionListener(getActionListener());
 		this.button.setFocusable(false);
 	}
@@ -26,6 +22,20 @@ public abstract class BoardButton {
 	public JButton getButton() {
 		return button;
 	}
+	
+	// Update the text and tool tip displayed in the GUI to reflect the latest sound this button is associated with
+	public void updateButtonText() {
+		String text = getSoundName() + " (" + getKeyName() + ")";
+		setButtonText(text);
+	}
+	
+	// Set the text displayed in the button in the GUI and it's tooltip
+	private void setButtonText(String text) {
+		button.setText(text);
+		button.setToolTipText(text);
+	}
+	
+	public abstract String getSoundName();
 	
 	// Returns the name of the keyboard key associated with this button
 	public abstract String getKeyName();

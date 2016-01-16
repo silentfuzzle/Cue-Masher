@@ -17,6 +17,11 @@ public class ProjectFileManager {
 		projectModified = false;
 	}
 	
+	// Returns if the project has been modified
+	public boolean getProjectModified() {
+		return projectModified;
+	}
+	
 	// Returns if a project file is open
 	public boolean isProjectOpen() {
 		return (projectFileIO != null);
@@ -76,15 +81,9 @@ public class ProjectFileManager {
 	}
 	
 	// Add a sound to the open project in memory
-	// soundPath - The path to the sound file on the file system
-	// keyCode - The code of the key the user can press to play the sound
-	// keyName - The name of the key the user can press to play the sound
-	// soundName - The short name of the sound to display in the GUI
-	// stoppable - 1 if the sound can be stopped with the Spacebar, 0 if not
-	public SoundInfo addSound(String soundPath, int keyCode, String keyName, String soundName, int stoppable) {
-
-		//Store the sound path and other information in the text file in an object
-		SoundInfo soundClip = new SoundInfo(soundPath, keyCode, keyName, soundName, stoppable);
+	// soundClip - An object storing information about the added or updated sound
+	public SoundInfo addSound(SoundInfo soundClip) {
+		int keyCode = soundClip.getKeyCode();
 		
 		if (soundList.containsKey(keyCode))
 		{
@@ -94,10 +93,10 @@ public class ProjectFileManager {
 			if (!existingClip.equals(soundClip))
 			{
 				// Update the existing sound's information with the new given information
-				existingClip.setPath(soundPath);
-				existingClip.setKeyName(keyName);
-				existingClip.setSoundName(soundName);
-				existingClip.setStoppable(stoppable);
+				existingClip.setPath(soundClip.getPath());
+				existingClip.setKeyName(soundClip.getKeyName());
+				existingClip.setSoundName(soundClip.getSoundName());
+				existingClip.setStoppable(soundClip.getStoppable());
 				projectModified = true;
 			}
 			return null;

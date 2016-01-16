@@ -149,6 +149,12 @@ public class CueMasherPanel extends JPanel {
 		return false;
 	}
 	
+	// Returns the sound associated with the given key code
+	// keyCode - The keyboard key code associated with the sound to retrieve
+	public SoundInfo getSound(int keyCode) {
+		return soundManager.getSound(keyCode);
+	}
+	
 	// Removes a sound from the interface and sound list
 	// keyCode - The keyboard key code associated with the sound
 	public void deleteSound(int keyCode) {
@@ -172,22 +178,33 @@ public class CueMasherPanel extends JPanel {
 		}
 	}
 
-	// Add a sound to the displayed buttons, sound list, and sound file
-	// soundPath - The path to the sound file on the file system
-	// keyCode - The code of the key the user can press to play the sound
-	// keyName - The name of the key the user can press to play the sound
-	// soundName - The short name of the sound to display in the GUI
-	// stoppable - 1 if the sound can be stopped with the Spacebar, 0 if not
-	public void addSound(String soundPath, int keyCode, String keyName, String soundName, int stoppable) {
+	// Update a sound in the displayed buttons, sound list, and sound file
+	// soundClip - An object storing information about the added or updated sound
+	public void updateSound(SoundInfo soundClip) {
 		
 		// Add the sound to the project
-		SoundInfo newSound = soundManager.addSound(soundPath, keyCode, keyName, soundName, stoppable);
+		SoundInfo newSound = soundManager.addSound(soundClip);
 		
 		if (newSound != null) {
-			// Add a button to the GUI
+			// Add a new button to the GUI
 			addSound(newSound);
-
-			// Display the new button in the GUI
+		}
+		
+		if (soundManager.getProjectModified()) {
+			
+			if (newSound == null) {
+				// An existing sound was updated
+				// Update the button label and tooltip
+				for (int s=0; s < soundList.size(); s++) {
+					BoardButton button = soundList.get(s);
+					if (button.getKeyCode() == soundClip.getKeyCode()) {
+						button.updateButtonText();
+				        break;
+					}
+				}
+			}
+			
+			// Update the GUI
 			frame.setProjectModified();
 			revalidate();
 	        repaint();
