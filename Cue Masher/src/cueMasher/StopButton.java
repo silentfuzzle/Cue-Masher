@@ -5,23 +5,22 @@ package cueMasher;
 
 import java.awt.event.*;
 
-import javax.swing.JButton;
-
 // This class defines a sound board button to use to stop all stoppable sounds.
 public class StopButton extends BoardButton {
+	private static String SPACEBAR = "Spacebar";
+	
 	private ProjectFileManager manager;
 	
 	// Constructor
 	// manager - The project manager object
-	// button - The GUI button in the interface
-	public StopButton(ProjectFileManager manager, JButton button) {
-		super(button);
+	public StopButton(ProjectFileManager manager) {
+		super("Stop", SPACEBAR);
 		this.manager = manager;
 	}
 	
 	// Returns the name of the button that stops all stoppable sounds
 	public String getKeyName() {
-		return CueMasherPanel.SPACEBAR;
+		return SPACEBAR;
 	}
 	
 	// Returns the key code of the keyboard key that stops all stoppable sounds

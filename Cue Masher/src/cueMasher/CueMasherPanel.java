@@ -14,7 +14,6 @@ import java.util.*;
 public class CueMasherPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
-	public static String SPACEBAR = "Spacebar";
 	private final int SCREEN_WIDTH = 1910;	//The estimated width of the application
 	private final int SCREEN_HEIGHT = 1000;	//The estimated height of the application
 	private final int BUTTON_SPACE = 10;	//The space to leave between buttons and the edge of the screen
@@ -30,6 +29,8 @@ public class CueMasherPanel extends JPanel {
 	
 	private ArrayList<BoardButton> soundList;	//Holds the list of objects containing the sounds and other information
 	private BoardButton space;
+
+	private boolean editingMode;
 	
 	//Constructor
 	// frame - The frame containing this panel
@@ -49,15 +50,21 @@ public class CueMasherPanel extends JPanel {
 		buttonHeight = (SCREEN_HEIGHT-(BUTTON_SPACE*7))/6;
 		
 		this.frame = frame;
-		soundList = new ArrayList<BoardButton>();
 		soundManager = new ProjectFileManager();
+		dialogManager = new SoundDialogManager(this);
+		
+		soundList = new ArrayList<BoardButton>();
 
 		//Create a button for the spacebar
-		JButton btnSpace = new JButton("Stop (" + SPACEBAR + ")");
-		space = new StopButton(soundManager, btnSpace);
-		add(btnSpace);
+		space = new StopButton(soundManager);
+		add(space.getButton());
 		
-		dialogManager = new SoundDialogManager(this);
+		editingMode = false;
+	}
+	
+	// Returns if the interface is in sound editing mode
+	public boolean getEditingMode() {
+		return editingMode || frame.getEditingMode();
 	}
 	
 	// Returns the object that manages all New/Edit Sound dialog boxes
@@ -192,12 +199,11 @@ public class CueMasherPanel extends JPanel {
 	private void addSound(SoundInfo soundInfo) {
 		
 		//Create a button for the sound
-		JButton btnSound = new JButton(soundInfo.getSoundName() + " (" + soundInfo.getKeyName() + ")");
-		SoundButton buttonContainer = new SoundButton(dialogManager, soundInfo, btnSound);
+		SoundButton buttonContainer = new SoundButton(dialogManager, soundInfo);
         
 		//Add the new sound button to the list of buttons and the panel
 		soundList.add(buttonContainer);
-		add(btnSound);
+		add(buttonContainer.getButton());
 	}
 	
 	// Clears all the buttons from the GUI
@@ -275,30 +281,48 @@ public class CueMasherPanel extends JPanel {
 		btnSpace.setLocation(xPos, yPos);
 	}
 	
-	//Listens to the keyboard keys and plays sounds at touch
+	//Listens to the keyboard input from the user
 	private class ToggleSound implements KeyListener {
 		public void keyPressed(KeyEvent e) {
-			System.out.println(e.getKeyCode() + ", " + e.getKeyChar());				//testing
+			int keyCode = e.getKeyCode();
 			
-			if (e.getKeyCode() == KeyEvent.VK_SPACE)
+			System.out.println(keyCode + ", " + e.getKeyChar());				//testing
+			
+			// When shift is held, the user has entered editing mode
+			boolean capsLockOn = Toolkit.getDefaultToolkit().getLockingKeyState(KeyEvent.VK_CAPS_LOCK);
+			if (e.isShiftDown() || capsLockOn) {
+				editingMode = true;
+			}
+			
+			if (keyCode == KeyEvent.VK_SPACE)
 				// Stop all stoppable sounds
 				soundManager.stopSounds();
 			else {
-				if (dialogManager.getEditingMode()) {
+				if (getEditingMode()) {
 					// In editing mode, open the sound in the Edit Sound dialog box
-					SoundInfo sound = soundManager.getSound(e.getKeyCode());
+					SoundInfo sound = soundManager.getSound(keyCode);
 					if (sound != null) {
 						dialogManager.displayEditSoundDialog(sound);
+					}
+					else if (keyCode != KeyEvent.VK_SHIFT && keyCode != KeyEvent.VK_CAPS_LOCK){
+						dialogManager.displayNewSoundDialog();
 					}
 				}
 				else {
 					// Otherwise, play the associated sound
-					soundManager.playSound(e.getKeyCode());
+					soundManager.playSound(keyCode);
 				}
 			}
 		}
 		
-		public void keyReleased(KeyEvent e) {}
+		// Exit editing mode when shift is released
+		public void keyReleased(KeyEvent e) {
+			boolean capsLockOn = Toolkit.getDefaultToolkit().getLockingKeyState(KeyEvent.VK_CAPS_LOCK);
+			if (!e.isShiftDown() && !capsLockOn) {
+				editingMode = false;
+			}
+		}
+		
 		public void keyTyped(KeyEvent e) {}
 	}
 }

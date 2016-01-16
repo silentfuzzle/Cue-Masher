@@ -18,6 +18,7 @@ public class CueMasherFrame extends JFrame {
 	
 	private CueMasherPanel panel;
 	private JMenuItem saveFile;
+	private JCheckBoxMenuItem editingMode;
 
 	// Constructor
 	// n - The name of the frame
@@ -73,10 +74,15 @@ public class CueMasherFrame extends JFrame {
 		newSound.addActionListener(new AddSoundListener());
 		editMenu.add(newSound);
 		
-		/*JCheckBoxMenuItem editingMode = new JCheckBoxMenuItem("Editing mode");
-		editMenu.add(editingMode);*/
+		editingMode = new JCheckBoxMenuItem("Editing mode");
+		editMenu.add(editingMode);
 		
 		setJMenuBar(cueMasherMenu);
+	}
+	
+	// Returns if editing mode is toggled on through the Edit menu
+	public boolean getEditingMode() {
+		return editingMode.isSelected();
 	}
 	
 	// Sets the save label to indicate that the project has been modified

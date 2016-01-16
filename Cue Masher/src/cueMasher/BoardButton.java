@@ -12,9 +12,12 @@ public abstract class BoardButton {
 	private JButton button;
 	
 	// Constructor
-	// button - The associated button in the GUI
-	public BoardButton(JButton button) {
-		this.button = button;
+	// soundName - The name of the board button
+	// keyName - The keyboard key name that toggles this board button
+	public BoardButton(String soundName, String keyName) {
+		String text = soundName + " (" + keyName + ")";
+		this.button = new JButton(text);
+		this.button.setToolTipText(text);
 		this.button.addActionListener(getActionListener());
 		this.button.setFocusable(false);
 	}

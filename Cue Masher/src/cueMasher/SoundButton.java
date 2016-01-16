@@ -6,8 +6,6 @@ package cueMasher;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
-
 // This class defines a sound board button that plays a user-defined sound.
 public class SoundButton extends BoardButton {
 	private SoundDialogManager dialogManager;
@@ -16,9 +14,8 @@ public class SoundButton extends BoardButton {
 	// Constructor
 	// dialogManager - The object that manages all New/Edit Sound Dialog boxes
 	// soundInfo - The information about the sound this button plays
-	// button - The GUI button that plays the sound
-	public SoundButton(SoundDialogManager dialogManager, SoundInfo soundInfo, JButton button) {
-		super(button);
+	public SoundButton(SoundDialogManager dialogManager, SoundInfo soundInfo) {
+		super(soundInfo.getSoundName(), soundInfo.getKeyName());
 		this.dialogManager = dialogManager;
 		this.soundInfo = soundInfo;
 	}

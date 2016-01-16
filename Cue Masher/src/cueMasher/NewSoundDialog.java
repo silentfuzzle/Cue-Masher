@@ -44,7 +44,7 @@ public class NewSoundDialog extends JPanel {
 		add(btnDeleteSound);
 		
 		// Display the current information about the sound being edited
-		txtSoundPath.setText(soundInfo.getPath());
+		setPath(soundInfo.getPath());
 		this.enteredKeyCode = soundInfo.getKeyCode();
 		
 		String keyName = soundInfo.getKeyName();
@@ -71,7 +71,6 @@ public class NewSoundDialog extends JPanel {
 		setPreferredSize(new Dimension(width,height));
 		f.setMinimumSize(new Dimension(width+5,height+30));
 		
-
 		// Inform the sound dialog manager that this dialog box is closing before closing it
 		f.addWindowListener(new WindowAdapter() {
 		    @Override
@@ -174,6 +173,12 @@ public class NewSoundDialog extends JPanel {
 		}
 	}
 	
+	// Sets the path to the selected sound file
+	public void setPath(String soundPath) {
+		txtSoundPath.setText(soundPath);
+		txtSoundPath.setToolTipText(soundPath);
+	}
+	
 	// Resets the key the user has entered to map a sound to
 	public void resetEnteredKey() {
 		txtKey.setText("");
@@ -181,9 +186,19 @@ public class NewSoundDialog extends JPanel {
 		enteredKeyCode = DEFAULT_KEY_CODE;
 	}
 	
+	// Brings this dialog into focus
+	public void focusFrame() {
+		containerFrame.toFront();
+	}
+	
 	// Inform the sound dialog manager that this dialog box is closing and close it
 	public void closeFrame() {
-		parentPanel.getDialogManager().closeSoundDialog(this);
+		int keyCode = -1;
+		if (soundInfo != null) {
+			keyCode = soundInfo.getKeyCode();
+		}
+		
+		parentPanel.getDialogManager().closeSoundDialog(this, keyCode);
 		containerFrame.dispose();
 	}
 
@@ -231,7 +246,7 @@ public class NewSoundDialog extends JPanel {
 			
 			if (choice == JFileChooser.APPROVE_OPTION) {
 				File file = fileChooser.getSelectedFile();
-				txtSoundPath.setText(file.getAbsolutePath());
+				setPath(file.getAbsolutePath());
 				
 				// Update the contents of the sound file text box
 				revalidate();

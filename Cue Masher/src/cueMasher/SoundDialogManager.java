@@ -3,62 +3,80 @@
 
 package cueMasher;
 
-import java.util.HashSet;
+import java.util.*;
 import javax.swing.JFrame;
 
 // This class manages all open New/Edit Sound dialog boxes.
 public class SoundDialogManager {
+	private int MAX_NEW_DIALOGS = 5;
+	
 	private CueMasherPanel panel;
-	private HashSet<NewSoundDialog> openDialogs;
-	private boolean editingMode;
+	private HashMap<Integer, NewSoundDialog> openEditDialogs;
+	private HashSet<NewSoundDialog> openNewDialogs;
 	
 	// Constructor
 	// panel - The main interface
 	public SoundDialogManager(CueMasherPanel panel) {
 		this.panel = panel;
-		openDialogs = new HashSet<NewSoundDialog>();
-		editingMode = false;
-	}
-	
-	// Sets if the interface is in sound editing mode
-	// editingMode - True if in editing mode, false if not
-	public void setEditingMode(boolean editingMode) {
-		this.editingMode = editingMode;
+		openEditDialogs = new HashMap<Integer, NewSoundDialog>();
+		openNewDialogs = new HashSet<NewSoundDialog>();
 	}
 	
 	// Returns if the interface is in sound editing mode
 	public boolean getEditingMode() {
-		return editingMode;
+		return panel.getEditingMode();
 	}
 	
 	// Removes the given Sound dialog box from the list of open sound dialog boxes
-	public void closeSoundDialog(NewSoundDialog dialog) {
-		openDialogs.remove(dialog);
+	// dialog - The dialog box to remove from the open dialogs
+	// keyCode - The keyCode the Edit Sound dialog box is editing or -1 if it is a New Sound dialog box
+	public void closeSoundDialog(NewSoundDialog dialog, int keyCode) {
+		if (openEditDialogs.containsKey(keyCode)) {
+			openEditDialogs.remove(keyCode);
+		}
+		else if (keyCode == -1) {
+			openNewDialogs.remove(dialog);
+		}
 	}
 	
 	// Displays a New Sound dialog box
 	public void displayNewSoundDialog() {
-		JFrame selectDialog = new JFrame("Add Sound");
-		NewSoundDialog dialog = new NewSoundDialog(selectDialog, panel);
-		displaySoundDialog(selectDialog, dialog);
+		if (openNewDialogs.size() >= MAX_NEW_DIALOGS) {
+			// The user has five or more New Sound dialog boxes open, bring one into focus
+			NewSoundDialog dialog = openNewDialogs.iterator().next();
+			dialog.focusFrame();
+		}
+		else {
+			// Open a New Sound dialog box
+			JFrame selectDialog = new JFrame("Add Sound");
+			NewSoundDialog dialog = new NewSoundDialog(selectDialog, panel);
+			openNewDialogs.add(dialog);
+			displaySoundDialog(selectDialog, dialog);
+		}
 	}
 	
 	// Displays an Edit Sound dialog box for the given sound
 	// soundInfo - The sound to display in the Edit Sound dialog
 	public void displayEditSoundDialog(SoundInfo soundInfo) {
-		JFrame selectDialog = new JFrame("Edit Sound");
-		NewSoundDialog dialog = new NewSoundDialog(selectDialog, panel, soundInfo);
-		displaySoundDialog(selectDialog, dialog);
+		int keyCode = soundInfo.getKeyCode();
+		if (openEditDialogs.containsKey(keyCode)) {
+			// The user is already editing a sound associated with this key, bring it into focus
+			NewSoundDialog dialog = openEditDialogs.get(keyCode);
+			dialog.focusFrame();
+		}
+		else {
+			// Open an Edit Sound dialog box associated with the given sound
+			JFrame selectDialog = new JFrame("Edit Sound");
+			NewSoundDialog dialog = new NewSoundDialog(selectDialog, panel, soundInfo);
+			openEditDialogs.put(keyCode, dialog);
+			displaySoundDialog(selectDialog, dialog);
+		}
 	}
 	
 	// Performs common actions before displaying a New/Edit Sound dialog box
 	// selectDialog - The frame that encapsulates the dialog box
 	// dialog - The object defining the New/Edit Sound dialog box
 	private void displaySoundDialog(JFrame selectDialog, NewSoundDialog dialog) {
-		// Add the dialog to the list of open dialogs
-		openDialogs.add(dialog);
-		
-		// Setup and display the dialog
 		selectDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		selectDialog.getContentPane().add(dialog);
 		selectDialog.pack();
