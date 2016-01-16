@@ -14,6 +14,8 @@ public class CueMasherFrame extends JFrame {
 	private String SAVE = "Save";
 	private String SAVE_MOD = SAVE + "*";
 	
+	private boolean warnModified = false;
+	
 	private CueMasherPanel panel;
 	private JMenuItem saveFile;
 
@@ -21,6 +23,20 @@ public class CueMasherFrame extends JFrame {
 	// n - The name of the frame
 	public CueMasherFrame(String n) {
 		super(n);
+		
+		// Warn users if they have unsaved changes before closing the frame
+		addWindowListener(new WindowAdapter() {
+		    @Override
+		    public void windowClosing(WindowEvent windowEvent) {
+		        if (displayWarning()) {
+		        	System.exit(0);
+		        }
+		        else {
+		        	// The user canceled closing the frame, do nothing
+		    		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		        }
+		    }
+		});
 
 		// Create the panel storing all the sound effect buttons
 		panel = new CueMasherPanel(this);
@@ -57,28 +73,69 @@ public class CueMasherFrame extends JFrame {
 	// Sets the save label to indicate that the project has been modified
 	public void setProjectModified() {
 		saveFile.setText(SAVE_MOD);
+		warnModified = true;
+	}
+	
+	// Saves the contents of the open project to the project file
+	public void saveProject() {
+		boolean saved = panel.saveFile();
+		if (saved) {
+			saveFile.setText(SAVE);
+			warnModified = false;
+		}
+	}
+	
+	// Prompt users to handle unsaved changes before closing the open project
+	public boolean displayWarning() {
+		boolean proceed = true;
+		if (warnModified) {
+			int n = JOptionPane.showConfirmDialog(
+				    this,
+				    "You have unsaved changes. Do you want to save your changes before proceeding?",
+				    "Unsaved Changes",
+				    JOptionPane.YES_NO_CANCEL_OPTION,
+				    JOptionPane.WARNING_MESSAGE);
+			
+			if (n == JOptionPane.CANCEL_OPTION || n == JOptionPane.CLOSED_OPTION) {
+				// Cancel the action following this warning
+				proceed = false;
+			}
+			else if (n == JOptionPane.YES_OPTION) {
+				saveProject();
+			}
+		}
+		return proceed;
 	}
 	
 	// Creates a new project
 	private class NewListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
-			panel.openNewProject();
+			// Warn users if they have unsaved changes before creating a new project
+			if (displayWarning()) {
+				panel.openNewProject();
+				saveFile.setText(SAVE_MOD);
+				warnModified = false;
+			}
 		}
 	}
 	
 	// Defines how the Open File menu item behaves when selected
 	private class OpenListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
-			// Allow the user to choose a Cue Masher file to open
-			JFileChooser fileChooser = new JFileChooser();
-			fileChooser.setFileFilter(new CueFileFilter());
-			int choice = fileChooser.showOpenDialog(CueMasherFrame.this);
-			
-			if (choice == JFileChooser.APPROVE_OPTION) {
-				// Populate the sound effect panel with the contents of the new file
-				File file = fileChooser.getSelectedFile();
-				panel.loadFile(file.getAbsolutePath());
-				saveFile.setText(SAVE);
+			// Warn users if they have unsaved changes before opening another project
+			if (displayWarning()) {
+				// Allow the user to choose a Cue Masher file to open
+				JFileChooser fileChooser = new JFileChooser();
+				fileChooser.setFileFilter(new CueFileFilter());
+				int choice = fileChooser.showOpenDialog(CueMasherFrame.this);
+				
+				if (choice == JFileChooser.APPROVE_OPTION) {
+					// Populate the sound effect panel with the contents of the new file
+					File file = fileChooser.getSelectedFile();
+					panel.loadFile(file.getAbsolutePath());
+					saveFile.setText(SAVE);
+					warnModified = false;
+				}
 			}
 		}
 	}
@@ -86,10 +143,7 @@ public class CueMasherFrame extends JFrame {
 	// Saves the project file when the user selects the Save option in the File menu
 	private class SaveListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
-			boolean saved = panel.saveFile();
-			if (saved) {
-				saveFile.setText(SAVE);
-			}
+			saveProject();
 		}
 	}
 	
@@ -104,11 +158,13 @@ public class CueMasherFrame extends JFrame {
 		}
 	}
 	
-	// Defines how the Quit menu item behaves when selected
+	// Save and close the application when the Quit option is selected
 	private class QuitListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
-			// Close the application
-			System.exit(0);
+			// Warn users if they have unsaved changes before closing the frame
+			if (displayWarning()) {
+				System.exit(0);
+			}
 		}
 	}
 }
