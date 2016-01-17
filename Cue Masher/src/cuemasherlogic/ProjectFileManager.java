@@ -1,7 +1,7 @@
 // License MIT
 // 2016, Emily Palmieri <silentfuzzle@gmail.com>
 
-package cueMasher;
+package cuemasherlogic;
 
 import java.util.*;
 

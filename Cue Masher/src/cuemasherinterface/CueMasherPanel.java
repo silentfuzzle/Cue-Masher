@@ -1,14 +1,14 @@
 // License MIT
 // 2016, Emily Palmieri <silentfuzzle@gmail.com>
 
-package cueMasher;
+package cuemasherinterface;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import javax.swing.*;
-
 import java.util.*;
+import cuemasherlogic.*;
 
 //This class defines the main Cue Masher GUI.
 public class CueMasherPanel extends JPanel {

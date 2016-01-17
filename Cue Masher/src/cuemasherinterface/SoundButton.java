@@ -1,10 +1,10 @@
 // License MIT
 // 2016, Emily Palmieri <silentfuzzle@gmail.com>
 
-package cueMasher;
+package cuemasherinterface;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
+import cuemasherlogic.SoundInfo;
 
 // This class defines a sound board button that plays a user-defined sound.
 public class SoundButton extends BoardButton {

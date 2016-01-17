@@ -1,7 +1,7 @@
 // License MIT
 // 2016, Emily Palmieri <silentfuzzle@gmail.com>
 
-package cueMasher;
+package cuemasherinterface;
 
 import java.awt.event.ActionListener;
 
