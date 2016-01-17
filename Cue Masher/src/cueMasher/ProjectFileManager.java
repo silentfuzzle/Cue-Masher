@@ -99,6 +99,7 @@ public class ProjectFileManager {
 				existingClip.setStoppable(soundClip.getStoppable());
 				projectModified = true;
 			}
+			soundClip.close();
 			return null;
 		}
 		else {

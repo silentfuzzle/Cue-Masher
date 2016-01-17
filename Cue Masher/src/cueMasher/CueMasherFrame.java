@@ -13,6 +13,7 @@ public class CueMasherFrame extends JFrame {
 	
 	private String SAVE = "Save";
 	private String SAVE_MOD = SAVE + "*";
+	private String SAVE_NEW = SAVE + "...";
 	
 	private boolean warnModified = false;
 	
@@ -54,11 +55,11 @@ public class CueMasherFrame extends JFrame {
 		newFile.addActionListener(new NewListener());
 		fileMenu.add(newFile);
 		
-		JMenuItem openFile = new JMenuItem("Open");
+		JMenuItem openFile = new JMenuItem("Open...");
 		openFile.addActionListener(new OpenListener());
 		fileMenu.add(openFile);
 		
-		saveFile = new JMenuItem(SAVE_MOD);
+		saveFile = new JMenuItem(SAVE_NEW);
 		saveFile.addActionListener(new SaveListener());
 		fileMenu.add(saveFile);
 		
@@ -87,7 +88,8 @@ public class CueMasherFrame extends JFrame {
 	
 	// Sets the save label to indicate that the project has been modified
 	public void setProjectModified() {
-		saveFile.setText(SAVE_MOD);
+		if (saveFile.getText().equalsIgnoreCase(SAVE))
+			saveFile.setText(SAVE_MOD);
 		warnModified = true;
 	}
 	
@@ -128,7 +130,7 @@ public class CueMasherFrame extends JFrame {
 			// Warn users if they have unsaved changes before creating a new project
 			if (displayWarning()) {
 				panel.openNewProject();
-				saveFile.setText(SAVE_MOD);
+				saveFile.setText(SAVE_NEW);
 				warnModified = false;
 			}
 		}

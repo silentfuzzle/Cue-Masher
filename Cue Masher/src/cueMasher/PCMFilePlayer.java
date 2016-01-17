@@ -95,6 +95,7 @@ public class PCMFilePlayer implements Runnable {
 	public void close() {
 		stop();
 		try {
+			line.close();
 			in.close();
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -37,7 +37,9 @@ public class CueMasherPanel extends JPanel {
 	public CueMasherPanel(CueMasherFrame frame) {
 		//Listens to the keyboard
 		addKeyListener(new ToggleSound());
-		//Panel is always in focus so the key listener works
+		
+		// Tweak focus so keyboard listener works
+		addFocusListener(new PanelFocusListener());
 		setFocusable(true);
 		
 		//Calculate the button width and height so the buttons span the screen
@@ -60,6 +62,16 @@ public class CueMasherPanel extends JPanel {
 		add(space.getButton());
 		
 		editingMode = false;
+	}
+	
+	// Set if the application is in editing mode based on the state of the shift key
+	public void setEditingMode() {
+		try {
+			Robot robot = new Robot();
+			robot.keyRelease(KeyEvent.VK_SHIFT);
+		} catch (AWTException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	// Returns if the interface is in sound editing mode
@@ -166,7 +178,7 @@ public class CueMasherPanel extends JPanel {
 			if (button.getKeyCode() == keyCode) {
 				// Remove the button from the interface
 				remove(button.getButton());
-				soundList.remove(keyCode);
+				soundList.remove(s);
 
 				// Update the GUI
 				frame.setProjectModified();
@@ -306,9 +318,11 @@ public class CueMasherPanel extends JPanel {
 			System.out.println(keyCode + ", " + e.getKeyChar());				//testing
 			
 			// When shift is held, the user has entered editing mode
-			boolean capsLockOn = Toolkit.getDefaultToolkit().getLockingKeyState(KeyEvent.VK_CAPS_LOCK);
-			if (e.isShiftDown() || capsLockOn) {
+			if (e.isShiftDown()) {
 				editingMode = true;
+			}
+			else {
+				editingMode = false;
 			}
 			
 			if (keyCode == KeyEvent.VK_SPACE)
@@ -334,12 +348,21 @@ public class CueMasherPanel extends JPanel {
 		
 		// Exit editing mode when shift is released
 		public void keyReleased(KeyEvent e) {
-			boolean capsLockOn = Toolkit.getDefaultToolkit().getLockingKeyState(KeyEvent.VK_CAPS_LOCK);
-			if (!e.isShiftDown() && !capsLockOn) {
+			if (!e.isShiftDown()) {
 				editingMode = false;
 			}
 		}
 		
 		public void keyTyped(KeyEvent e) {}
+	}
+	
+	// Make sure the editing mode state is up to date when the panel is focused
+	private class PanelFocusListener implements FocusListener {
+
+		public void focusGained(FocusEvent arg0) {
+			setEditingMode();
+		}
+
+		public void focusLost(FocusEvent arg0) {}
 	}
 }

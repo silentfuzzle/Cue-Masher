@@ -35,7 +35,9 @@ public class SoundDialogManager {
 			openNewDialogs.remove(dialog);
 		}
 		else {
-			closeSoundDialog(keyCode);
+			if (openEditDialogs.containsKey(keyCode)) {
+				openEditDialogs.remove(keyCode);
+			}
 		}
 	}
 	
@@ -43,7 +45,8 @@ public class SoundDialogManager {
 	// keyCode - The keyboard key code associated with the dialog to remove
 	public void closeSoundDialog(int keyCode) {
 		if (openEditDialogs.containsKey(keyCode)) {
-			openEditDialogs.remove(keyCode);
+			NewSoundDialog dialog = openEditDialogs.get(keyCode);
+			dialog.closeFrame();
 		}
 	}
 	

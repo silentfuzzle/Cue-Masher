@@ -70,7 +70,7 @@ public class NewSoundDialog extends JPanel {
 	// mainPanel - The main interface
 	public NewSoundDialog(JFrame f, CueMasherPanel mainPanel) {
 		int width = 400;
-		int height = 172;
+		int height = 195;
 		setPreferredSize(new Dimension(width,height));
 		f.setMinimumSize(new Dimension(width+5,height+30));
 		
@@ -120,7 +120,7 @@ public class NewSoundDialog extends JPanel {
 		add(lblFinalKey);
 		lblName = new JLabel("Sound name:");
 		add(lblName);
-		lblWarning = new JLabel("");
+		lblWarning = new JLabel();
 		lblWarning.setForeground(Color.red);
 		add(lblWarning);
 		
@@ -167,13 +167,13 @@ public class NewSoundDialog extends JPanel {
 			// Make sure there is room for the Delete button
 			btnDeleteSound.setLocation(btnAddSound.getWidth()+20,140);
 			btnCancel.setLocation(btnAddSound.getWidth()+btnDeleteSound.getWidth()+30,140);
-			lblWarning.setLocation(btnAddSound.getWidth()+btnDeleteSound.getWidth()+btnCancel.getWidth()+40,145);
 		}
 		else {
 			// A new sound is being defined, the delete button isn't needed
 			btnCancel.setLocation(btnAddSound.getWidth()+20,140);
-			lblWarning.setLocation(btnAddSound.getWidth()+btnCancel.getWidth()+30,145);
 		}
+		
+		lblWarning.setLocation(10,170);
 	}
 	
 	// Sets the path to the selected sound file
@@ -294,8 +294,9 @@ public class NewSoundDialog extends JPanel {
 			}
 			
 			// Check if the key the user has selected is already associated with a sound
+			// Don't complain if the user is updating an existing sound and not changing its key
 			SoundInfo existingSound = parentPanel.getSound(enteredKeyCode);
-			if (existingSound != null) {
+			if (existingSound != null && (soundInfo == null || (soundInfo.getKeyCode() != enteredKeyCode))) {
 				// Ask the user to resolve the conflict
 				Object[] options = new Object[] {"Replace",
 		                    "Replace and Edit",
