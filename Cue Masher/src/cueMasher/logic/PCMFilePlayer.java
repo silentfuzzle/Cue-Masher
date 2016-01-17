@@ -2,7 +2,7 @@
 // 2016, Emily Palmieri <silentfuzzle@gmail.com>
 // Original code source: http://codeidol.com/java/swing/Audio/Play-Non-Trivial-Audio/
 
-package cuemasherlogic;
+package cuemasher.logic;
 
 import java.io.*;
 import javax.sound.sampled.*;

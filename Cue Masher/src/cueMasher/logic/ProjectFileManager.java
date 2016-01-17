@@ -1,10 +1,10 @@
 // License MIT
 // 2016, Emily Palmieri <silentfuzzle@gmail.com>
 
-package cuemasherlogic;
+package cuemasher.logic;
 
 import java.util.*;
-import cuemasherlogic.filereaders.CSVReaderWriter;
+import cuemasher.logic.filereaders.CSVReaderWriter;
 
 // This class manages the open project file.
 public class ProjectFileManager {

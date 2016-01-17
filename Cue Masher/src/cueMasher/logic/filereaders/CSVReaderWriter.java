@@ -1,11 +1,11 @@
 // License MIT
 // 2016, Emily Palmieri <silentfuzzle@gmail.com>
 
-package cuemasherlogic.filereaders;
+package cuemasher.logic.filereaders;
 
 import java.io.*;
 import java.util.*;
-import cuemasherlogic.SoundInfo;
+import cuemasher.logic.SoundInfo;
 
 // This class reads and writes project files in a csv format.
 public class CSVReaderWriter {

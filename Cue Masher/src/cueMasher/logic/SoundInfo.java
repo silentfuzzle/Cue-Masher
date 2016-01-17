@@ -1,7 +1,7 @@
 // License MIT
 // 2016, Emily Palmieri <silentfuzzle@gmail.com>
 
-package cuemasherlogic;
+package cuemasher.logic;
 
 import java.io.File;
 import java.io.IOException;

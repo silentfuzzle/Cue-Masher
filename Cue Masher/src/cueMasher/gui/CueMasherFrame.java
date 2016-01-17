@@ -1,12 +1,12 @@
 // License MIT
 // 2016, Emily Palmieri <silentfuzzle@gmail.com>
 
-package cuemasherinterface;
+package cuemasher.gui;
 
 import java.awt.event.*;
 import java.io.File;
 import javax.swing.*;
-import cuemasherinterface.filefilters.CueFileFilter;
+import cuemasher.gui.filefilters.CueFileFilter;
 
 // This class defines the frame of the Cue Masher GUI.
 public class CueMasherFrame extends JFrame {

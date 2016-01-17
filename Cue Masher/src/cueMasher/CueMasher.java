@@ -4,7 +4,7 @@
 package cuemasher;
 
 import javax.swing.*;
-import cuemasherinterface.CueMasherFrame;
+import cuemasher.gui.CueMasherFrame;
 
 //Creates and runs the application
 public class CueMasher {

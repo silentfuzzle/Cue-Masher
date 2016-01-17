@@ -1,7 +1,7 @@
 // License MIT
 // 2016, Emily Palmieri <silentfuzzle@gmail.com>
 
-package cuemasherinterface;
+package cuemasher.gui;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;

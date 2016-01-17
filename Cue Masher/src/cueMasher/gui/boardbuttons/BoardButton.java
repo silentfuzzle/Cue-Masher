@@ -1,7 +1,7 @@
 // License MIT
 // 2016, Emily Palmieri <silentfuzzle@gmail.com>
 
-package cuemasherinterface.boardbuttons;
+package cuemasher.gui.boardbuttons;
 
 import java.awt.event.ActionListener;
 
