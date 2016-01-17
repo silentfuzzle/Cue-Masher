@@ -15,6 +15,11 @@ public class CSVReaderWriter {
 	public CSVReaderWriter(String filePath) {
 		this.filePath = filePath;
 	}
+	
+	// Returns the path to the open Cue Masher file
+	public String getFilePath() {
+		return filePath;
+	}
 
 	// Read the project file and returns its contents in objects
 	public ArrayList<SoundInfo> readFile() {

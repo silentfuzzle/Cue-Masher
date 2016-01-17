@@ -31,6 +31,17 @@ public class ProjectFileManager {
 	// textFilePath - The path to the project file
 	public void setProjectFilePath(String textFilePath) {
 		projectFileIO = new CSVReaderWriter(textFilePath);
+		projectModified = true;
+	}
+	
+	// Returns the path to the open project file if one is open
+	public String getProjectFilePath() {
+		if (projectFileIO != null) {
+			return projectFileIO.getFilePath();
+		}
+		else {
+			return null;
+		}
 	}
 	
 	// Stops and disposes of sounds and clears sound list for new project
@@ -53,7 +64,7 @@ public class ProjectFileManager {
 	public ArrayList<SoundInfo> readFile(String textFilePath) {
 		
 		openNewProject();
-		setProjectFilePath(textFilePath);
+		projectFileIO = new CSVReaderWriter(textFilePath);
 		
 		// Read the project file and save its contents to memory
 		ArrayList<SoundInfo> readSounds = projectFileIO.readFile();

@@ -107,38 +107,49 @@ public class CueMasherPanel extends JPanel {
 	// Save the open project if needed
 	public boolean saveFile() {
 		if (!soundManager.isProjectOpen()) {
-			// The open project hasn't been saved to a file yet
-			// Have the user select a location and file name
-			JFileChooser fileChooser = new JFileChooser();
-			fileChooser.setFileFilter(new CueFileFilter());
-			int choice = fileChooser.showSaveDialog(CueMasherPanel.this);
-			
-			if (choice == JFileChooser.APPROVE_OPTION) {
-				// Get the name of the file the user selected
-				File file = fileChooser.getSelectedFile();
-				String filePath = file.getAbsolutePath().trim();
-				
-				// Make sure that it has a Cue Masher file extension
-				String cueMasherExt = CueFileFilter.CUE_MASHER_FILE_EXT;
-				boolean addExt = false;
-				if (filePath.length() < cueMasherExt.length())
-					addExt = true;
-				else {
-					String ext = filePath.substring(filePath.length()-cueMasherExt.length(), filePath.length());
-					if (!ext.equalsIgnoreCase(cueMasherExt))
-						addExt = true;
-				}
-				
-				// Add the cue masher file extension if it doesn't exist
-				if (addExt)
-					filePath = filePath + cueMasherExt;
-				
-				// Save the project to the selected file
-				soundManager.setProjectFilePath(filePath);
-				return soundManager.saveFile();
-			}
+			return saveFileAs();
 		}
 		else {
+			return soundManager.saveFile();
+		}
+	}
+	
+	// Saves the open project to a new file selected by the user
+	public boolean saveFileAs() {
+		// Filter the file chooser by Cue Masher files
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setFileFilter(new CueFileFilter());
+		
+		// Display the existing file location by default if it exists
+		String filePath = soundManager.getProjectFilePath();
+		if (filePath != null) {
+			File openProjectFile = new File(filePath);
+			fileChooser.setSelectedFile(openProjectFile);
+		}
+		
+		int choice = fileChooser.showSaveDialog(CueMasherPanel.this);
+		if (choice == JFileChooser.APPROVE_OPTION) {
+			// Get the name of the file the user selected
+			File file = fileChooser.getSelectedFile();
+			filePath = file.getAbsolutePath().trim();
+			
+			// Make sure that it has a Cue Masher file extension
+			String cueMasherExt = CueFileFilter.CUE_MASHER_FILE_EXT;
+			boolean addExt = false;
+			if (filePath.length() < cueMasherExt.length())
+				addExt = true;
+			else {
+				String ext = filePath.substring(filePath.length()-cueMasherExt.length(), filePath.length());
+				if (!ext.equalsIgnoreCase(cueMasherExt))
+					addExt = true;
+			}
+			
+			// Add the cue masher file extension if it doesn't exist
+			if (addExt)
+				filePath = filePath + cueMasherExt;
+			
+			// Save the project to the selected file
+			soundManager.setProjectFilePath(filePath);
 			return soundManager.saveFile();
 		}
 		return false;

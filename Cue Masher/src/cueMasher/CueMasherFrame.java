@@ -63,6 +63,10 @@ public class CueMasherFrame extends JFrame {
 		saveFile.addActionListener(new SaveListener());
 		fileMenu.add(saveFile);
 		
+		JMenuItem saveFileAs = new JMenuItem("Save As...");
+		saveFileAs.addActionListener(new SaveAsListener());
+		fileMenu.add(saveFileAs);
+		
 		JMenuItem quit = new JMenuItem("Quit");
 		quit.addActionListener(new QuitListener());
 		fileMenu.add(quit);
@@ -97,9 +101,14 @@ public class CueMasherFrame extends JFrame {
 	public void saveProject() {
 		boolean saved = panel.saveFile();
 		if (saved) {
-			saveFile.setText(SAVE);
-			warnModified = false;
+			setSaved();
 		}
+	}
+	
+	// Sets the interface to show that the project has been saved
+	public void setSaved() {
+		saveFile.setText(SAVE);
+		warnModified = false;
 	}
 	
 	// Prompt users to handle unsaved changes before closing the open project
@@ -150,8 +159,7 @@ public class CueMasherFrame extends JFrame {
 					// Populate the sound effect panel with the contents of the new file
 					File file = fileChooser.getSelectedFile();
 					panel.loadFile(file.getAbsolutePath());
-					saveFile.setText(SAVE);
-					warnModified = false;
+					setSaved();
 				}
 			}
 		}
@@ -161,6 +169,16 @@ public class CueMasherFrame extends JFrame {
 	private class SaveListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
 			saveProject();
+		}
+	}
+	
+	// Saves the project to a new or existing Cue Masher file selected by the user when Save As... is selected
+	private class SaveAsListener implements ActionListener {
+		public void actionPerformed(ActionEvent event) {
+			boolean saved = panel.saveFileAs();
+			if (saved) {
+				setSaved();
+			}
 		}
 	}
 	
