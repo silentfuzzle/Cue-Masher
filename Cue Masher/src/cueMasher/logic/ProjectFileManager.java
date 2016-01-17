@@ -4,13 +4,13 @@
 package cuemasher.logic;
 
 import java.util.*;
-import cuemasher.logic.filereaders.CSVReaderWriter;
+import cuemasher.logic.filereaders.*;
 
 // This class manages the open project file.
 public class ProjectFileManager {
 	private HashMap<Integer, SoundInfo> soundList;	//Holds the current list of sounds in the open project
 	private boolean projectModified;
-	private CSVReaderWriter projectFileIO = null;
+	private FileReaderWriter projectFileIO = null;
 	
 	// Constructor
 	public ProjectFileManager() {
@@ -76,6 +76,11 @@ public class ProjectFileManager {
 			if (!soundList.containsKey(keyCode)) {
 				soundList.put(keyCode, currSound);
 			}
+		}
+		
+		// The contents of the project file may have been modified in memory to make the values valid
+		if (projectFileIO.getReadError()) {
+			projectModified = true;
 		}
 		
         return readSounds;

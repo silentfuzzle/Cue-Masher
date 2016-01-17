@@ -83,7 +83,8 @@ public class CueMasherPanel extends JPanel {
 	
 	// Set the buttons displayed in the panel
 	// textFilePath - The path to the sound effect definition file
-	public void loadFile(String textFilePath) {
+	// Returns 0 (an error occurred and a new project was opened), 1 (an error occurred), 2 (the project opened normally)
+	public int loadFile(String textFilePath) {
 		clearBoard();
 		
 		// Get the sounds contained in the given project file
@@ -93,6 +94,21 @@ public class CueMasherPanel extends JPanel {
 		for (int s=0; s < readSounds.size(); s++) {
 			addSound(readSounds.get(s));
 		}
+		
+		// Report if an error occurred while opening to the project
+		// Allow the user to close the project without proceeding
+		if (soundManager.getProjectModified()) {
+			int choice = JOptionPane.showConfirmDialog(frame, "One or more errors were encountered while reading the project file. " +
+					"The file may be missing, not well-formatted, or not a Cue Masher project file. Do you want to proceed?",
+				    "Keep Project Open?",
+				    JOptionPane.YES_NO_OPTION);
+			if (choice == JOptionPane.NO_OPTION) {
+				openNewProject();
+				return 0;
+			}
+			return 1;
+		}
+		return 2;
 	}
 	
 	// Save the open project if needed

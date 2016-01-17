@@ -8,18 +8,12 @@ import java.util.*;
 import cuemasher.logic.SoundInfo;
 
 // This class reads and writes project files in a csv format.
-public class CSVReaderWriter {
-	private String filePath;
+public class CSVReaderWriter extends FileReaderWriter {
 	
 	// Constructor
 	// filePath - The path to the project file
 	public CSVReaderWriter(String filePath) {
-		this.filePath = filePath;
-	}
-	
-	// Returns the path to the open Cue Masher file
-	public String getFilePath() {
-		return filePath;
+		super(filePath);
 	}
 
 	// Read the project file and returns its contents in objects
@@ -30,7 +24,7 @@ public class CSVReaderWriter {
 		//Attempt to get the text file of information and initialize the sounds
 		try {
 			//Get the file and a Scanner to look through it
-			File soundPaths = new File(filePath);
+			File soundPaths = new File(getFilePath());
 			Scanner scanSoundPathDoc = new Scanner(soundPaths);
 			
 			//Create another scanner to parse each line of the text file
@@ -41,11 +35,21 @@ public class CSVReaderWriter {
 				//File is delimited with CSV format
 				scanLine.useDelimiter(",");
 				
-				SoundInfo soundClip = new SoundInfo(scanLine.next(),scanLine.nextInt(),scanLine.next(),scanLine.next(),scanLine.nextInt());
-				sounds.add(soundClip);
+				// Get information about the sound
+				String soundPath = getNextFromScanner(scanLine);
+				int keyCode = parseNumber(getNextFromScanner(scanLine));
+				if (getValidSound(keyCode, soundPath)) {
+					String keyName = getKeyName(getNextFromScanner(scanLine));
+					String soundName = getSoundName(getNextFromScanner(scanLine));
+					int stoppable = getStoppable(getNextFromScanner(scanLine));
+					
+					// Save the information to an object
+					SoundInfo soundClip = new SoundInfo(soundPath, keyCode, keyName, soundName, stoppable);
+					sounds.add(soundClip);
+				}
 			}
 		} catch (FileNotFoundException e) {
-			System.out.println("Not found");
+			setReadError();
 		}
         
         return sounds;
@@ -55,7 +59,7 @@ public class CSVReaderWriter {
 	// sounds - The sound objects to write to the project file
 	public boolean writeFile(Collection<SoundInfo> sounds) {
 		try {
-			PrintWriter print = new PrintWriter(new FileWriter(filePath, false));
+			PrintWriter print = new PrintWriter(new FileWriter(getFilePath(), false));
 			
 			for(SoundInfo sound: sounds){
 				print.printf("%s" + "%n", 
@@ -70,5 +74,17 @@ public class CSVReaderWriter {
 			return false;
 		}
 		return true;
+	}
+	
+	// Returns the next item in a comma delimited line
+	// scanLine - The scanner scanning the comma delimited line
+	private String getNextFromScanner(Scanner scanLine) {
+		if (scanLine.hasNext()) {
+			return scanLine.next();
+		}
+		
+		// Another item wasn't found as expected
+		setReadError();
+		return null;
 	}
 }

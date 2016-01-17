@@ -159,8 +159,22 @@ public class CueMasherFrame extends JFrame {
 				if (choice == JFileChooser.APPROVE_OPTION) {
 					// Populate the sound effect panel with the contents of the new file
 					File file = fileChooser.getSelectedFile();
-					panel.loadFile(file.getAbsolutePath());
-					setSaved();
+					int state = panel.loadFile(file.getAbsolutePath());
+					if (state == 0) {
+						// An error occurred while opening the project and a new project was opened instead
+						saveFile.setText(SAVE_NEW);
+						warnModified = false;
+					}
+					else if (state == 1) {
+						// An error occurred while opening the project
+						// The project file needs to be updated to make it valid
+						saveFile.setText(SAVE);
+						setProjectModified();
+					}
+					else {
+						// The project opened normally
+						setSaved();
+					}
 				}
 			}
 		}

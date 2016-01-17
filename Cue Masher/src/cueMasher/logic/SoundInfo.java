@@ -12,6 +12,8 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 //Stores a sound: its path, button, player, keycode, label, and associated information
 public class SoundInfo {
 	public static int DEFAULT_KEY_CODE = -1;
+	public static String DEFAULT_KEY_NAME = "?";
+	public static String DEFAULT_SOUND_NAME = "Unnamed";
 	
 	private String path, keyName, soundName;
 	private int keyCode;
