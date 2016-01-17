@@ -16,11 +16,7 @@ import cuemasher.gui.filefilters.CueFileFilter;
 public class CueMasherPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
-	private final int SCREEN_WIDTH = 1910;	//The estimated width of the application
-	private final int SCREEN_HEIGHT = 1000;	//The estimated height of the application
 	private final int BUTTON_SPACE = 10;	//The space to leave between buttons and the edge of the screen
-	private int[] buttonWidth;
-	private int buttonHeight;
 	
 	//These strings determine where to place the buttons based on the key the user presses to play the sound
 	private String[] rows = {"`1234567890-=", "qwertyuiop[]\\", "asdfghjkl;\'", "zxcvbnm<./", "1234567890"};
@@ -44,16 +40,9 @@ public class CueMasherPanel extends JPanel {
 		addFocusListener(new PanelFocusListener());
 		setFocusable(true);
 		
-		//Calculate the button width and height so the buttons span the screen
-		buttonWidth = new int[5];
-		buttonWidth[0] = (SCREEN_WIDTH-(BUTTON_SPACE*12))/13;
-		buttonWidth[1] = buttonWidth[0];
-		buttonWidth[2] = (SCREEN_WIDTH-(BUTTON_SPACE*10))/11;
-		buttonWidth[3] = (SCREEN_WIDTH-(BUTTON_SPACE*10))/10;
-		buttonWidth[4] = (SCREEN_WIDTH-(BUTTON_SPACE*10))/10;
-		buttonHeight = (SCREEN_HEIGHT-(BUTTON_SPACE*7))/6;
-		
 		this.frame = frame;
+		this.frame.setMinimumSize(new Dimension(500, 500));
+		
 		soundManager = new ProjectFileManager();
 		dialogManager = new SoundDialogManager(this);
 		
@@ -266,6 +255,17 @@ public class CueMasherPanel extends JPanel {
 	//Set the positions and sizes of the buttons and display the panel
 	public void paintComponent(Graphics page) {
 		super.paintComponent(page);
+
+		//Calculate the button width and height so the buttons span the screen
+		int screenWidth = getWidth();
+		int screenHeight = getHeight();
+		int[] buttonWidth = new int[5];
+		buttonWidth[0] = (screenWidth-(BUTTON_SPACE*13))/13;
+		buttonWidth[1] = buttonWidth[0];
+		buttonWidth[2] = (screenWidth-(BUTTON_SPACE*11))/11;
+		buttonWidth[3] = (screenWidth-(BUTTON_SPACE*11))/10;
+		buttonWidth[4] = (screenWidth-(BUTTON_SPACE*11))/10;
+		int buttonHeight = (screenHeight-(BUTTON_SPACE*7))/6;
 		
 		int xPos;
 		int yPos;
@@ -319,7 +319,7 @@ public class CueMasherPanel extends JPanel {
 		JButton btnSpace = space.getButton();
 		xPos = 10;
 		yPos = ((buttonHeight+BUTTON_SPACE)*5) + BUTTON_SPACE;
-		btnSpace.setSize(new Dimension (SCREEN_WIDTH-BUTTON_SPACE, buttonHeight));
+		btnSpace.setSize(new Dimension (screenWidth-(BUTTON_SPACE*2), buttonHeight));
 		btnSpace.setLocation(xPos, yPos);
 	}
 	

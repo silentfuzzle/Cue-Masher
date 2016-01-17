@@ -76,11 +76,9 @@ I've worked on Cue Masher off and on as I've found bugs and needed features for 
 
 * Needs a new text file format such as XML so that commas in sound file paths don't cause problems.
 * Needs to handle missing sound files nicer.
-* Needs an executable to run outside an IDE.
 * Needs to handle project files with invalid formats.
-* Needs to handle a wider range of screen resolutions.
+* Needs an executable to run outside an IDE.
 * A bug that causes a sound effect to loop indefinitely when one or more keys are pressed quickly at the same time needs to be fixed.
-* Needs better code organization.
 
 ### Low Priority
 
@@ -91,3 +89,4 @@ I've worked on Cue Masher off and on as I've found bugs and needed features for 
 * Needs ability to restart a long sound effect or music from the beginning.
 * Needs ability to play sounds of different file types.
 * Needs ability to accept keyboards with different key configurations.
+* Needs to display buttons in a layout so that buttons are always aligned.
