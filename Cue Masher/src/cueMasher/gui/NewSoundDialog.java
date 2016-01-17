@@ -1,14 +1,14 @@
 // License MIT
 // 2016, Emily Palmieri <silentfuzzle@gmail.com>
 
-package cueMasher;
+package cuemasher.gui;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
+import cuemasher.logic.SoundInfo;
+import cuemasher.gui.filefilters.SoundFilter;
 
 // This class defines the dialog box for creating new and editing existing keyboard-sound mappings.
 public class NewSoundDialog extends JPanel {

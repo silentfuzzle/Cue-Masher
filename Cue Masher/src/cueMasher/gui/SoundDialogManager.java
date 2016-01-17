@@ -1,10 +1,11 @@
 // License MIT
 // 2016, Emily Palmieri <silentfuzzle@gmail.com>
 
-package cueMasher;
+package cuemasher.gui;
 
 import java.util.*;
 import javax.swing.JFrame;
+import cuemasher.logic.SoundInfo;
 
 // This class manages all open New/Edit Sound dialog boxes.
 public class SoundDialogManager {

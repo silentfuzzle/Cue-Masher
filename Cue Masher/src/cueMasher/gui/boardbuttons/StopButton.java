@@ -1,9 +1,10 @@
 // License MIT
 // 2016, Emily Palmieri <silentfuzzle@gmail.com>
 
-package cueMasher;
+package cuemasher.gui.boardbuttons;
 
 import java.awt.event.*;
+import cuemasher.logic.ProjectFileManager;
 
 // This class defines a sound board button to use to stop all stoppable sounds.
 public class StopButton extends BoardButton {

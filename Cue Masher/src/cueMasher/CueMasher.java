@@ -1,9 +1,10 @@
 // License MIT
 // 2016, Emily Palmieri <silentfuzzle@gmail.com>
 
-package cueMasher;
+package cuemasher;
 
 import javax.swing.*;
+import cuemasher.gui.CueMasherFrame;
 
 //Creates and runs the application
 public class CueMasher {
