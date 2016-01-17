@@ -1,7 +1,7 @@
 // License MIT
 // 2016, Emily Palmieri <silentfuzzle@gmail.com>
 
-package cuemasherinterface;
+package cuemasherinterface.boardbuttons;
 
 import java.awt.event.*;
 import cuemasherlogic.ProjectFileManager;

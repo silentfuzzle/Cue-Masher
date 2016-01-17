@@ -6,6 +6,7 @@ package cuemasherinterface;
 import java.awt.event.*;
 import java.io.File;
 import javax.swing.*;
+import cuemasherinterface.filefilters.CueFileFilter;
 
 // This class defines the frame of the Cue Masher GUI.
 public class CueMasherFrame extends JFrame {

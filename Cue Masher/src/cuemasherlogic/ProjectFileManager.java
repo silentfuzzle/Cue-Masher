@@ -4,6 +4,7 @@
 package cuemasherlogic;
 
 import java.util.*;
+import cuemasherlogic.filereaders.CSVReaderWriter;
 
 // This class manages the open project file.
 public class ProjectFileManager {

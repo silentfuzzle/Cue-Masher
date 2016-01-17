@@ -9,6 +9,8 @@ import java.io.File;
 import javax.swing.*;
 import java.util.*;
 import cuemasherlogic.*;
+import cuemasherinterface.boardbuttons.*;
+import cuemasherinterface.filefilters.CueFileFilter;
 
 //This class defines the main Cue Masher GUI.
 public class CueMasherPanel extends JPanel {

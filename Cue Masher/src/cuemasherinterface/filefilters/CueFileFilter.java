@@ -1,7 +1,7 @@
 // License MIT
 // 2016, Emily Palmieri <silentfuzzle@gmail.com>
 	
-package cuemasherinterface;
+package cuemasherinterface.filefilters;
 
 import java.io.File;
 

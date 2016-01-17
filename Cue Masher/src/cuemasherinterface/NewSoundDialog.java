@@ -8,6 +8,7 @@ import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
 import cuemasherlogic.SoundInfo;
+import cuemasherinterface.filefilters.SoundFilter;
 
 // This class defines the dialog box for creating new and editing existing keyboard-sound mappings.
 public class NewSoundDialog extends JPanel {
