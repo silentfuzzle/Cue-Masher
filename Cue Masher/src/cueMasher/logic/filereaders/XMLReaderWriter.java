@@ -38,15 +38,19 @@ public class XMLReaderWriter extends FileReaderWriter {
 			while(scanSoundPathDoc.hasNextLine()) {
 				fileText += scanSoundPathDoc.nextLine();
 			}
+			fileText = fileText.trim();
 			
 			// Iterate through and store all the sounds in the file's text
 			int soundIndex = 0;
 			while (soundIndex != -1) {
 				// Get the text defining a sound
 				soundIndex = fileText.indexOf(wrapInStartTag(SOUND_TAG), soundIndex);
-				String soundLine = getTagContents(fileText, SOUND_TAG, soundIndex);
+				if (soundIndex == -1) {
+					continue;
+				}
 				
 				// Ignore empty sound tags
+				String soundLine = getTagContents(fileText, SOUND_TAG, soundIndex);
 				if (soundLine != null && !soundLine.isEmpty()) {
 					// Get the information about the sound
 					String soundPath = getTagContents(soundLine, PATH_TAG, 0);
@@ -66,6 +70,12 @@ public class XMLReaderWriter extends FileReaderWriter {
 				// Look for the next sound in the text
 				soundIndex++;
 			}
+			
+			// There was text in the file but none of it was in the expected format
+			if (!fileText.isEmpty() && sounds.size() == 0) {
+				setReadError();
+			}
+			
 		} catch (FileNotFoundException e) {
 			setReadError();
 		}

@@ -69,20 +69,38 @@ public class SoundDialogManager {
 	
 	// Displays an Edit Sound dialog box for the given sound
 	// soundInfo - The sound to display in the Edit Sound dialog
-	public void displayEditSoundDialog(SoundInfo soundInfo) {
+	// Returns if the sound was successfully displayed
+	public boolean displayEditSoundDialog(SoundInfo soundInfo) {
+		boolean displayed = false;
 		int keyCode = soundInfo.getKeyCode();
 		if (openEditDialogs.containsKey(keyCode)) {
 			// The user is already editing a sound associated with this key, bring it into focus
 			NewSoundDialog dialog = openEditDialogs.get(keyCode);
 			dialog.focusFrame();
+			displayed = true;
 		}
 		else {
-			// Open an Edit Sound dialog box associated with the given sound
-			JFrame selectDialog = new JFrame("Edit Sound");
-			NewSoundDialog dialog = new NewSoundDialog(selectDialog, panel, soundInfo);
-			openEditDialogs.put(keyCode, dialog);
-			displaySoundDialog(selectDialog, dialog);
+			// Display the sound in a new dialog if it is associated with a key
+			// or if there is room for another New Sound editor to be opened
+			displayed = (keyCode != SoundInfo.DEFAULT_KEY_CODE || openNewDialogs.size() < MAX_NEW_DIALOGS);
+			
+			if (displayed) {
+				// Create the dialog
+				JFrame selectDialog = new JFrame("Edit Sound");
+				NewSoundDialog dialog = new NewSoundDialog(selectDialog, panel, soundInfo);
+				
+				// Track the dialog
+				if (keyCode == SoundInfo.DEFAULT_KEY_CODE) {
+					openNewDialogs.add(dialog);
+				}
+				else {
+					openEditDialogs.put(keyCode, dialog);
+				}
+				
+				displaySoundDialog(selectDialog, dialog);
+			}
 		}
+		return displayed;
 	}
 	
 	// Performs common actions before displaying a New/Edit Sound dialog box

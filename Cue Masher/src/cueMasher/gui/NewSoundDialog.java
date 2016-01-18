@@ -20,7 +20,7 @@ public class NewSoundDialog extends JPanel {
 	private CueMasherPanel parentPanel;
 	private JFileChooser fileChooser;
 	
-	private JButton btnSelectSound, btnAddSound, btnDeleteSound, btnCancel;
+	private JButton btnSelectSound, btnAddSound, btnDeleteSound, btnCopySound, btnCancel;
 	private JLabel lblKey, lblFinalKey, lblName, lblWarning;
 	private JTextField txtSoundPath, txtKey, txtSoundName;
 	private JCheckBox cbxStoppable;
@@ -44,6 +44,10 @@ public class NewSoundDialog extends JPanel {
 			btnDeleteSound = new JButton("Delete");
 			btnDeleteSound.addActionListener(new DeleteListener());
 			add(btnDeleteSound);
+			
+			btnCopySound = new JButton("Copy");
+			btnCopySound.addActionListener(new CopyListener());
+			add(btnCopySound);
 			
 			// Display the information about the key associated with the sound
 			this.enteredKeyCode = soundInfo.getKeyCode();
@@ -164,9 +168,10 @@ public class NewSoundDialog extends JPanel {
 		btnAddSound.setLocation(10,140);
 		if (btnDeleteSound != null) {
 			// This dialog box is in editing mode
-			// Make sure there is room for the Delete button
+			// Make sure there is room for the Delete and Copy buttons
 			btnDeleteSound.setLocation(btnAddSound.getWidth()+20,140);
-			btnCancel.setLocation(btnAddSound.getWidth()+btnDeleteSound.getWidth()+30,140);
+			btnCopySound.setLocation(btnAddSound.getWidth()+btnDeleteSound.getWidth()+30,140);
+			btnCancel.setLocation(btnAddSound.getWidth()+btnDeleteSound.getWidth()+btnCopySound.getWidth()+40,140);
 		}
 		else {
 			// A new sound is being defined, the delete button isn't needed
@@ -187,6 +192,23 @@ public class NewSoundDialog extends JPanel {
 		txtKey.setText("");
 		lblFinalKey.setText("");
 		enteredKeyCode = SoundInfo.DEFAULT_KEY_CODE;
+	}
+	
+	// Displays the given sound in a dummy object in a new Sound Dialog
+	// existingSound - The sound to copy to a new Sound Dialog
+	// Returns if the sound was successfully displayed
+	public boolean copySoundToNewDialog(SoundInfo existingSound) {
+		SoundInfo copy = new SoundInfo(existingSound.getPath(), 
+				SoundInfo.DEFAULT_KEY_CODE, "", 
+				existingSound.getSoundName(), 
+				existingSound.getStoppable());
+		
+		// Attempt to display the sound in a new Sound Dialog
+		boolean displayed = parentPanel.getDialogManager().displayEditSoundDialog(copy);
+		if (!displayed) {
+			lblWarning.setText("There are too many sound editors open to continue with this action.");
+		}
+		return displayed;
 	}
 	
 	// Brings this dialog into focus
@@ -297,6 +319,8 @@ public class NewSoundDialog extends JPanel {
 			// Don't complain if the user is updating an existing sound and not changing its key
 			SoundInfo existingSound = parentPanel.getSound(enteredKeyCode);
 			if (existingSound != null && (soundInfo == null || (soundInfo.getKeyCode() != enteredKeyCode))) {
+				lblWarning.setText("");
+				
 				// Ask the user to resolve the conflict
 				Object[] options = new Object[] {"Replace",
 		                    "Replace and Edit",
@@ -320,11 +344,11 @@ public class NewSoundDialog extends JPanel {
 					parentPanel.getDialogManager().closeSoundDialog(existingSound.getKeyCode());
 					
 					// Copy the sound to a dummy object and display it in a new Edit Sound dialog
-					SoundInfo copy = new SoundInfo(existingSound.getPath(), 
-							SoundInfo.DEFAULT_KEY_CODE, "", 
-							existingSound.getSoundName(), 
-							existingSound.getStoppable());
-					parentPanel.getDialogManager().displayEditSoundDialog(copy);
+					boolean displayed = copySoundToNewDialog(existingSound);
+					if (!displayed) {
+						// There were too many open sound editors to open a new editor
+						return;
+					}
 				}
 				else if (n == JOptionPane.CANCEL_OPTION || n == JOptionPane.CLOSED_OPTION) {
 					// The user canceled creating the sound
@@ -351,6 +375,16 @@ public class NewSoundDialog extends JPanel {
 		public void actionPerformed(ActionEvent event) {
 			parentPanel.deleteSound(soundInfo.getKeyCode());
 			closeFrame();
+		}
+	}
+	
+	// Copy this sound a new sound editor where the user to assign another key to it
+	private class CopyListener implements ActionListener {
+		public void actionPerformed(ActionEvent event) {
+			boolean displayed = copySoundToNewDialog(soundInfo);
+			if (displayed) {
+				lblWarning.setText("");
+			}
 		}
 	}
 	

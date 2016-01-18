@@ -39,7 +39,7 @@ public abstract class FileReaderWriter {
 	// soundPath - The sound file path retrieved from the file
 	protected boolean getValidSound(String soundPath, int keyCode, String keyName) {
 		// Currently, all sounds must have a key code, file path, and key name in order to be placed on the sound board
-		if (keyCode == -1 || soundPath == null || soundPath.isEmpty() || keyName == null) {
+		if (keyCode == SoundInfo.DEFAULT_KEY_CODE || soundPath == null || soundPath.isEmpty() || keyName == null) {
 			setReadError();
 			return false;
 		}
@@ -87,7 +87,7 @@ public abstract class FileReaderWriter {
 	// Returns the given string from the project file transformed to a number
 	// numberString - The number to transform
 	protected int parseNumber(String numberString) {
-		int number = -1;
+		int number = SoundInfo.DEFAULT_KEY_CODE;
 		if (numberString != null) {
 			try {
 				number = Integer.parseInt(numberString);

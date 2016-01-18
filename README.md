@@ -22,7 +22,7 @@ Cue Masher's main interface is laid out similarly to a standard QWERTY keyboard.
 
 ### Supported Keys
 
-Supported keys include all the alphanumeric keys, "`", "-", "=", "[", "]", ";", "'", "\", ",", ".", and "/". On the number pad, only the numeric keys are supported.
+Supported keys include all the alphanumeric keys, "`", "-", "=", "[", "]", ";", "'", "\", ".", and "/". On the number pad, only the numeric keys are supported.
 
 ### Adding Sounds
 
@@ -66,7 +66,7 @@ To save the open project, select File > Save from the menu. If you have a new pr
 
 ### Save As
 
-Select File > Save As from the menu bar to save the open project to a new or existing .cuemasher file.
+Select File > Save As from the menu bar to save the open project to a new or existing .cuemasher file. If you are seeing error messages when trying to save your project file, try this option to select a different file location.
 
 ### Quit
 
@@ -78,7 +78,6 @@ I've worked on Cue Masher off and on as I've found bugs and needed features for 
 
 ### High Priority
 
-* Needs a new text file format such as XML so that commas in sound file paths don't cause problems.
 * Needs an executable to run outside an IDE.
 * A bug that causes a sound effect to loop indefinitely when one or more keys are pressed quickly at the same time needs to be fixed.
 
