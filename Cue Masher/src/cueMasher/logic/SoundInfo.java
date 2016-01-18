@@ -83,6 +83,11 @@ public class SoundInfo {
 	public String getPath() {
 		return path;
 	}
+	
+	// Returns whether the sound file could be opened
+	public boolean getSoundOpen() {
+		return (sound != null);
+	}
 
 	//Set the name of the key to press to play the sound
 	// kN - The name of the key used to play this sound
@@ -141,6 +146,8 @@ public class SoundInfo {
 	
 	// Stops and disposes of the sound player
 	public void close() {
-		sound.close();
+		if (sound != null) {
+			sound.close();
+		}
 	}
 }

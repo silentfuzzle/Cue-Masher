@@ -69,6 +69,7 @@ public class ProjectFileManager {
 		
 		// Read the project file and save its contents to memory
 		ArrayList<SoundInfo> readSounds = projectFileIO.readFile();
+		ArrayList<Integer> removeSounds = new ArrayList<Integer>();
 		for (int s=0; s < readSounds.size(); s++) {
 			SoundInfo currSound = readSounds.get(s);
 			int keyCode = currSound.getKeyCode();
@@ -76,6 +77,19 @@ public class ProjectFileManager {
 			if (!soundList.containsKey(keyCode)) {
 				soundList.put(keyCode, currSound);
 			}
+			else {
+				// Two sounds with the same key code were found in the file
+				// Report this as a read error
+				removeSounds.add(s);
+				currSound.close();
+				projectModified = true;
+			}
+		}
+		
+		// Remove sounds with duplicate key codes from the list
+		for (int i=0; i < removeSounds.size(); i++) {
+			int index = removeSounds.get(i);
+			readSounds.remove(index);
 		}
 		
 		// The contents of the project file may have been modified in memory to make the values valid

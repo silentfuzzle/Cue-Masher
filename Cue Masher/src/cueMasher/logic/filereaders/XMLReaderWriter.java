@@ -46,13 +46,14 @@ public class XMLReaderWriter extends FileReaderWriter {
 				soundIndex = fileText.indexOf(wrapInStartTag(SOUND_TAG), soundIndex);
 				String soundLine = getTagContents(fileText, SOUND_TAG, soundIndex);
 				
+				// Ignore empty sound tags
 				if (soundLine != null && !soundLine.isEmpty()) {
 					// Get the information about the sound
 					String soundPath = getTagContents(soundLine, PATH_TAG, 0);
 					int keyCode = parseNumber(getTagContents(soundLine, KEY_CODE_TAG, 0));
+					String keyName = getKeyName(getTagContents(soundLine, KEY_NAME_TAG, 0));
 					
-					if (getValidSound(keyCode, soundPath)) {
-						String keyName = getKeyName(getTagContents(soundLine, KEY_NAME_TAG, 0));
+					if (getValidSound(soundPath, keyCode, keyName)) {
 						String soundName = getSoundName(getTagContents(soundLine, SOUND_NAME_TAG, 0));
 						int stoppable = getStoppable(getTagContents(soundLine, STOPPABLE_TAG, 0));
 						
@@ -123,7 +124,7 @@ public class XMLReaderWriter extends FileReaderWriter {
 			int endSearchIndex = searchText.indexOf(wrapInEndTag(tagName), searchIndex);
 			if (endSearchIndex != -1) {
 				// Return the contents between the start and end tags
-				String tagContents = searchText.substring(searchIndex+startTag.length(), endSearchIndex);
+				String tagContents = searchText.substring(searchIndex+startTag.length(), endSearchIndex).trim();
 				return tagContents;
 			}
 		}

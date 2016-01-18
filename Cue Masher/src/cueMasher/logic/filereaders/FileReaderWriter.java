@@ -37,8 +37,9 @@ public abstract class FileReaderWriter {
 	// Returns whether to proceed creating a sound object from the values retrieved from the open Cue Masher file
 	// keyCode - The key code retrieved from the file
 	// soundPath - The sound file path retrieved from the file
-	protected boolean getValidSound(int keyCode, String soundPath) {
-		if (keyCode == -1 || soundPath == null || soundPath.isEmpty()) {
+	protected boolean getValidSound(String soundPath, int keyCode, String keyName) {
+		// Currently, all sounds must have a key code, file path, and key name in order to be placed on the sound board
+		if (keyCode == -1 || soundPath == null || soundPath.isEmpty() || keyName == null) {
 			setReadError();
 			return false;
 		}
@@ -50,8 +51,9 @@ public abstract class FileReaderWriter {
 	protected String getKeyName(String keyName) {
 		if (keyName == null || keyName.isEmpty()) {
 			// The key name couldn't be retrieved or isn't valid
-			keyName = SoundInfo.DEFAULT_KEY_NAME;
+			//keyName = SoundInfo.DEFAULT_KEY_NAME;
 			setReadError();
+			return null;
 		}
 		return keyName;
 	}

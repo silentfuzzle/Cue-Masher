@@ -92,10 +92,16 @@ public class CueMasherPanel extends JPanel {
 		
 		// Add buttons to the interface for each sound in the file
 		for (int s=0; s < readSounds.size(); s++) {
-			addSound(readSounds.get(s));
+			SoundInfo curr = readSounds.get(s);
+			if (checkValidKey(curr.getKeyName())) {
+				addSound(readSounds.get(s));
+			}
+			else {
+				soundManager.deleteSound(curr.getKeyCode());
+			}
 		}
 		
-		// Report if an error occurred while opening to the project
+		// Report if an error occurred while opening the project
 		// Allow the user to close the project without proceeding
 		if (soundManager.getProjectModified()) {
 			int choice = JOptionPane.showConfirmDialog(frame, "One or more errors were encountered while reading the project file. " +

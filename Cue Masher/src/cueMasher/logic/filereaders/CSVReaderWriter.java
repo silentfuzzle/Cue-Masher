@@ -31,21 +31,26 @@ public class CSVReaderWriter extends FileReaderWriter {
 			Scanner scanLine = new Scanner("");
 			//Parse each line in the text file
 			while(scanSoundPathDoc.hasNextLine()) {
-				scanLine = new Scanner(scanSoundPathDoc.nextLine());
-				//File is delimited with CSV format
-				scanLine.useDelimiter(",");
+				String line = scanSoundPathDoc.nextLine().trim();
 				
-				// Get information about the sound
-				String soundPath = getNextFromScanner(scanLine);
-				int keyCode = parseNumber(getNextFromScanner(scanLine));
-				if (getValidSound(keyCode, soundPath)) {
-					String keyName = getKeyName(getNextFromScanner(scanLine));
-					String soundName = getSoundName(getNextFromScanner(scanLine));
-					int stoppable = getStoppable(getNextFromScanner(scanLine));
+				// Ignore empty lines
+				if (!line.isEmpty()) {
+					// Split the line by commas and iterate through it
+					scanLine = new Scanner(line);
+					scanLine.useDelimiter(",");
 					
-					// Save the information to an object
-					SoundInfo soundClip = new SoundInfo(soundPath, keyCode, keyName, soundName, stoppable);
-					sounds.add(soundClip);
+					// Get information about the sound
+					String soundPath = getNextFromScanner(scanLine);
+					int keyCode = parseNumber(getNextFromScanner(scanLine));
+					String keyName = getKeyName(getNextFromScanner(scanLine));
+					if (getValidSound(soundPath, keyCode, keyName)) {
+						String soundName = getSoundName(getNextFromScanner(scanLine));
+						int stoppable = getStoppable(getNextFromScanner(scanLine));
+						
+						// Save the information to an object
+						SoundInfo soundClip = new SoundInfo(soundPath, keyCode, keyName, soundName, stoppable);
+						sounds.add(soundClip);
+					}
 				}
 			}
 		} catch (FileNotFoundException e) {
@@ -80,7 +85,7 @@ public class CSVReaderWriter extends FileReaderWriter {
 	// scanLine - The scanner scanning the comma delimited line
 	private String getNextFromScanner(Scanner scanLine) {
 		if (scanLine.hasNext()) {
-			return scanLine.next();
+			return scanLine.next().trim();
 		}
 		
 		// Another item wasn't found as expected

@@ -36,7 +36,9 @@ When you're finished, click Add to add the sound to the project's sound board. I
 
 ### Playing Sounds
 
-To play the sounds on the sound board, click the buttons on the interface or press the corresponding keys on the keyboard. Make sure that Edit > Editing mode isn't checked and that you aren't holding down the Shift key. You can stop all Stoppable sounds by pressing the Spacebar or clicking the Stop button at the bottom of the interface. Note that there is a known bug that causes sounds to loop infinitely if they are stopped or started repeatedly. If this happens, you will need to close and reopen Cue Masher.
+To play the sounds on the sound board, click the buttons on the interface or press the corresponding keys on the keyboard. Make sure that Edit > Editing mode isn't checked and that you aren't holding down the Shift key. If a button on the board is colored pink, this means that the sound file couldn't be found or opened, and the sound isn't playable. You can stop all Stoppable sounds by pressing the Spacebar or clicking the Stop button at the bottom of the interface.
+
+Note that there is a known bug that causes sounds to loop infinitely if they are stopped or started repeatedly. If this happens, you will need to close and reopen Cue Masher.
 
 ### Editing Sounds
 
@@ -54,7 +56,9 @@ When you open Cue Masher, a new project is automatically open. To open a new pro
 
 ### Open
 
-To open an existing .cuemasher file on your computer, select File > Open from the menu bar. You may be prompted to save or discard the changes to your current project. Select a .cuemasher file from your computer in the following File Chooser. The interface will be populated with the file's contents if it is formatted properly.
+To open an existing .cuemasher file on your computer, select File > Open from the menu bar. You may be prompted to save or discard the changes to your current project. Select a .cuemasher file from your computer in the following File Chooser. The interface will be populated with the file's contents.
+
+If the file is not a valid .cuemasher file or isn't formatted properly, the application will still attempt to read it and populate the interface from it as much as possible. Any sound-keyboard definitions in the file that it fails to read will not be imported into the project. At the end of the process the application will report that an error occurred and ask if you wish to keep the project open in a dialogue box. If you proceed and Save the project, the badly formatted file will be overwritten with what data could be imported into the project. If the file is one that you wrote by hand, you may want to close the project instead and attempt to properly format it first so that you don't lose your work.
 
 ### Save
 
@@ -75,10 +79,9 @@ I've worked on Cue Masher off and on as I've found bugs and needed features for 
 ### High Priority
 
 * Needs a new text file format such as XML so that commas in sound file paths don't cause problems.
-* Needs to handle missing sound files nicer.
-* Needs to handle project files with invalid formats.
 * Needs an executable to run outside an IDE.
 * A bug that causes a sound effect to loop indefinitely when one or more keys are pressed quickly at the same time needs to be fixed.
+* Needs to handle failed save operations.
 
 ### Low Priority
 

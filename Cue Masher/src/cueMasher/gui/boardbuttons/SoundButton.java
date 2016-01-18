@@ -3,6 +3,7 @@
 
 package cuemasher.gui.boardbuttons;
 
+import java.awt.Color;
 import java.awt.event.*;
 import cuemasher.logic.SoundInfo;
 import cuemasher.gui.SoundDialogManager;
@@ -19,6 +20,11 @@ public class SoundButton extends BoardButton {
 		this.dialogManager = dialogManager;
 		this.soundInfo = soundInfo;
 		updateButtonText();
+		
+		// The sound file couldn't be opened, color the button to inform the user
+		if (!soundInfo.getSoundOpen()) {
+			getButton().setBackground(Color.pink);
+		}
 	}
 
 	// Returns the name of the sound that this button plays
