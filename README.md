@@ -1,20 +1,50 @@
 # Cue Masher
 
-Cue Masher is a basic, open-source digital soundboard created for plays and other theater productions with complex sound designs and live sound cues. I wrote this application for a production of "Bullshot Crummond" and have also used it for "Amelia Earhart" and "The Diary of Adam and Eve." With it, you can map keys on your keyboard to sound effects and music, creating a digital soundboard. You can also play sounds by clicking their associated buttons in the GUI. The application can play multiple sound tracks and sound effects at the same time, and sounds that you specify can be stopped by pressing the Spacebar.
+Cue Masher is a basic, open-source digital soundboard created for plays and other theater productions with complex sound designs and live sound cues. I wrote this application for a production of "Bullshot Crummond" and have also used it for "Amelia Earhart" and "The Diary of Adam and Eve." With it, you can map keys on your keyboard to sound effects and music, creating a digital soundboard. Sounds can be played by clicking their associated buttons in the GUI or using the keyboard keys. Cue Masher allows you to quickly create and edit your projects/sound boards even while simultaneously playing sounds. The application can play multiple sound tracks and sound effects at the same time, and sounds that you specify can be stopped by pressing the Spacebar.
 
-This is a desktop application written in Java. Currently, it must run through an IDE such as Eclipse. It accepts .wav formatted sound files and assumes that you are using a QWERTY keyboard. Sound effect-keyboard mappings can be programmed manually by writing a specially formatted text file with the file extension ".cuemasher". You can open .cuemasher files in the application to populate the interface. These files can also be edited or created within Cue Masher.
+This is a desktop application written in Java. Currently, it must run through an IDE such as Eclipse. It accepts .wav formatted sound files and assumes that you are using a QWERTY keyboard.
 
-## .cuemasher File Format
+## Cue Masher Project File Formats
 
-Each line of a .cuemasher file defines a sound effect and a keyboard key and should be formatted as follows:
+.cuemasher files are text files with a ".cuemasher" extension that define the sound-keyboard mappings that will be displayed in the Cue Masher interface when the project file is open in the application. Each sound-keyboard mapping in the file includes such information as the full path to the .wav file, the key code on the keyboard that plays the sound, and the short name of the sound to display in the interface. 
 
-[Full path to the sound file, .wav only, no commas],[the key code of the keyboard key],[the name of the key to display in the GUI],[the name of the sound to display in the GUI],[0 if the sound can't be stopped with the Spacebar, 1 if it can]
+Cue Masher reads and writes these files when projects are opened and saved, but the format is simple enough that you can write and edit .cuemasher files in any text editor. Advanced users may find this useful for mapping sounds to keys that otherwise would not be allowed (sounds probably won't show up in the interface but may still be playable from the keyboard). For convenience, if you're writing your .cuemasher file manually, the application writes the name of the key and its associated key code to the Console when you press any key while the application is running. This is true whether the key is mapped to a sound or not.
+
+### XML Format
+
+Each sound in a .cuemasher XML file is expected to be encapsulated in "Sound" open and closing tags. These tags and their contents can span multiple lines, and the contents of each "Sound" tag don't need to be in a particular order. The format for each sound should be as follows:
+
+```
+<Sound>
+    <Path>Full path to the sound file, .wav only</Path>
+    <KeyCode>the key code of the keyboard key</KeyCode>
+    <KeyName>the name of the key to display in the GUI</KeyName>
+    <SoundName>the name of the sound to display in the GUI</SoundName>
+    <Stoppable>0 if the sound can't be stopped with the Spacebar, 1 if it can</Stoppable>
+</Sound>
+```
+
+For example, the following sound definition specifies that the sound file located at "C:\\Amelia Earhart\\FinalAudio\\Music\\Along the Milky Way.wav" should be played when the "1" key, which has the key code "49", is pressed. This sound effect is displayed as "Milky Way" in the GUI and can be stopped before it finishes by pressing the Spacebar as specified by the Stoppable attribute "1".
+
+```
+<Sound>
+    <Path>C:\\Amelia Earhart\\FinalAudio\\Music\\Along the Milky Way.wav</Path>
+    <KeyCode>49</KeyCode>
+    <KeyName>1</KeyName>
+    <SoundName>Milky Way</SoundName>
+    <Stoppable>1</Stoppable>
+</Sound>
+```
+
+### CSV Format (deprecated)
+
+The current version of Cue Masher isn't set up to read or write CSV files anymore, but the code for this still exists in the code base. Under the .cuemasher CSV file format, the ',' isn't a supported key and file paths and sound names with commas in them will not be read correctly. Each line should be formatted as follows:
+
+[Full path to the sound file, .wav only, no commas],[the key code of the keyboard key],[the name of the key to display in the GUI, no commas],[the name of the sound to display in the GUI, no commas],[0 if the sound can't be stopped with the Spacebar, 1 if it can]
 
 For example, the following line specifies that the sound file located at "C:\\Amelia Earhart\\FinalAudio\\Music\\Along the Milky Way.wav" should be played when the "1" key, which has the key code "49", is pressed. This sound effect is displayed as "Milky Way" in the GUI and can be stopped before it finishes by pressing the Spacebar as specified by the final "1" at the end of the line.
 
 C:\\Amelia Earhart\\FinalAudio\\Music\\Along the Milky Way.wav,49,1,Milky Way,1
-
-For convenience, if you're writing your .cuemasher file manually, the application writes the name of the key and its associated key code to the Console when you press any key while the application is running. This is true whether the key is mapped to a sound or not.
 
 ## The Sound Board
 
@@ -44,9 +74,11 @@ Note that there is a known bug that causes sounds to loop infinitely if they are
 
 There are several ways that you can select a sound to edit. You can hold down the Shift key and press an associated keyboard key, you can hold down the Shift key and click a button in the interface, or you can toggle on Editing Mode by selecting Edit > Editing mode from the menu bar. In Editing Mode, press any supported key that's been assigned a sound or click a button in the interface to select a sound to edit.
 
-Once you select a sound, an Edit Sound dialogue box pre-populated with the information about the selected sound will appear. You can change any of the sound's attributes and then click the Apply Changes button to update the project. You can also delete the sound from the board by clicking the Delete button or click Cancel to discard all changes.
+Once you select a sound, an Edit Sound dialogue box pre-populated with the information about the selected sound will appear. You can change any of the sound's attributes and then click the Apply Changes button to update the project. You can also delete the sound from the board by clicking the Delete button, or click Cancel to discard all changes. Clicking Copy opens the sound in another Edit Sound dialogue box where you can assign it to another key on the board.
 
 If you assign a new sound a key that is already associated with a sound or you assign an existing sound a new key that is already associated with another sound, you will be asked to resolve the conflict before the board will be updated. You can do this by selecting "Replace", "Replace and Edit", or "Cancel" from the following dialogue box. The Replace option replaces the existing sound with the new or updated sound. Replace and Edit also replaces the existing sound, but it brings up a new Edit Sound dialogue box where you can select a new key for the sound that was replaced. Clicking Cancel cancels the action and returns you to the Add or Edit Sound dialogue where you can select a new key for the sound and continue editing it.
+
+You can have as many Edit Sound dialogue boxes open as assigned keys on the board, but you can have only a maximum of five New Sound dialogue boxes open at a time. These dialogue boxes include ones that contain copies of sounds created by the "Replace and Edit" and "Copy" actions. If you have too many New Sound dialogue boxes open when you attempt to perform either of these actions, you will be asked to close some of them first.
 
 ## File Menu
 
