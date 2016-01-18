@@ -15,6 +15,7 @@ public class CueMasherFrame extends JFrame {
 	private String SAVE = "Save";
 	private String SAVE_MOD = SAVE + "*";
 	private String SAVE_NEW = SAVE + "...";
+	private String SAVE_ERROR = "An error occurred while saving the project. Make sure that Cue Masher has permission to write to the project's location.";
 	
 	private boolean warnModified = false;
 	
@@ -99,11 +100,24 @@ public class CueMasherFrame extends JFrame {
 	}
 	
 	// Saves the contents of the open project to the project file
-	public void saveProject() {
+	// Returns true if an error occurred while saving the project file
+	public boolean saveProject() {
 		boolean saved = panel.saveFile();
+		return getSaveProjectError(saved);
+	}
+	
+	// Returns true if the project failed to be saved, returns false if the project didn't need to be saved or was saved successfully
+	// saved - The saved status returned from the panel
+	public boolean getSaveProjectError(boolean saved) {
 		if (saved) {
+			// Update the Save menu item to reflect that the project file is up to date
 			setSaved();
 		}
+		else if (warnModified) {
+			// The project needs to be saved but couldn't be saved
+			return true;
+		}
+		return false;
 	}
 	
 	// Sets the interface to show that the project has been saved
@@ -113,12 +127,13 @@ public class CueMasherFrame extends JFrame {
 	}
 	
 	// Prompt users to handle unsaved changes before closing the open project
+	// Returns true if the next action after this warning message should be executed
 	public boolean displayWarning() {
 		boolean proceed = true;
 		if (warnModified) {
 			int n = JOptionPane.showConfirmDialog(
 				    this,
-				    "You have unsaved changes. Do you want to save your changes before proceeding?",
+				    "You have unsaved changes. Do you want to save your changes before closing the project?",
 				    "Unsaved Changes",
 				    JOptionPane.YES_NO_CANCEL_OPTION,
 				    JOptionPane.WARNING_MESSAGE);
@@ -128,10 +143,27 @@ public class CueMasherFrame extends JFrame {
 				proceed = false;
 			}
 			else if (n == JOptionPane.YES_OPTION) {
-				saveProject();
+				boolean saveFailed = saveProject();
+				if (saveFailed) {
+					// An error occurred while saving the project, check if the user wishes to proceed closing the project
+					n = JOptionPane.showConfirmDialog(this, 
+							SAVE_ERROR + " " + "Do you want to continue closing the project?",
+							"Save Failed",
+						    JOptionPane.YES_NO_OPTION,
+						    JOptionPane.WARNING_MESSAGE);
+					if (n == JOptionPane.NO_OPTION) {
+						// Cancel the action following this warning
+						proceed = false;
+					}
+				}
 			}
 		}
 		return proceed;
+	}
+	
+	// Report to the user than an error occurred while saving the project file
+	public void displaySaveError() {
+		JOptionPane.showMessageDialog(this, SAVE_ERROR);
 	}
 	
 	// Creates a new project
@@ -183,7 +215,10 @@ public class CueMasherFrame extends JFrame {
 	// Saves the project file when the user selects the Save option in the File menu
 	private class SaveListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
-			saveProject();
+			boolean saveFailed = saveProject();
+			if (saveFailed) {
+				displaySaveError();
+			}
 		}
 	}
 	
@@ -191,8 +226,9 @@ public class CueMasherFrame extends JFrame {
 	private class SaveAsListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
 			boolean saved = panel.saveFileAs();
-			if (saved) {
-				setSaved();
+			boolean saveFailed = getSaveProjectError(saved);
+			if (saveFailed) {
+				displaySaveError();
 			}
 		}
 	}

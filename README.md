@@ -81,7 +81,6 @@ I've worked on Cue Masher off and on as I've found bugs and needed features for 
 * Needs a new text file format such as XML so that commas in sound file paths don't cause problems.
 * Needs an executable to run outside an IDE.
 * A bug that causes a sound effect to loop indefinitely when one or more keys are pressed quickly at the same time needs to be fixed.
-* Needs to handle failed save operations.
 
 ### Low Priority
 
