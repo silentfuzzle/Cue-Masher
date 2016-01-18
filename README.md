@@ -2,7 +2,7 @@
 
 Cue Masher is a basic, open-source digital soundboard created for plays and other theater productions with complex sound designs and live sound cues. I wrote this application for a production of "Bullshot Crummond" and have also used it for "Amelia Earhart" and "The Diary of Adam and Eve." With it, you can map keys on your keyboard to sound effects and music, creating a digital soundboard. Sounds can be played by clicking their associated buttons in the GUI or using the keyboard keys. Cue Masher allows you to quickly create and edit your projects/sound boards even while simultaneously playing sounds. The application can play multiple sound tracks and sound effects at the same time, and sounds that you specify can be stopped by pressing the Spacebar.
 
-This is a desktop application written in Java. Currently, it must run through an IDE such as Eclipse. It accepts .wav formatted sound files and assumes that you are using a QWERTY keyboard.
+This is a desktop application written in Java and runs with an executable .jar file (see releases). It accepts .wav formatted sound files and assumes that you are using a QWERTY keyboard.
 
 ## The Sound Board
 
@@ -32,7 +32,7 @@ Note that there is a known bug that causes sounds to loop infinitely if they are
 
 There are several ways that you can select a sound to edit. You can hold down the Shift key and press an associated keyboard key, you can hold down the Shift key and click a button in the interface, or you can toggle on Editing Mode by selecting Edit > Editing mode from the menu bar. In Editing Mode, press any supported key that's been assigned a sound or click a button in the interface to select a sound to edit.
 
-Once you select a sound, an Edit Sound dialogue box pre-populated with the information about the selected sound will appear. You can change any of the sound's attributes and then click the Apply Changes button to update the project. You can also delete the sound from the board by clicking the Delete button, or click Cancel to discard all changes. Clicking Copy opens the sound in another Edit Sound dialogue box where you can assign it to another key on the board.
+Once you select a sound, an Edit Sound dialogue box pre-populated with the information about the selected sound will appear. You can change any of the sound's attributes and then click the Apply Changes button to update the project. You can also delete the sound from the board by clicking the Delete button, or click Cancel to discard all changes. Clicking Copy opens the sound in another Edit Sound dialogue box where you can assign it to another key on the board and modify it as desired.
 
 If you assign a new sound a key that is already associated with a sound or you assign an existing sound a new key that is already associated with another sound, you will be asked to resolve the conflict before the board will be updated. You can do this by selecting "Replace", "Replace and Edit", or "Cancel" from the following dialogue box. The Replace option replaces the existing sound with the new or updated sound. Replace and Edit also replaces the existing sound, but it brings up a new Edit Sound dialogue box where you can select a new key for the sound that was replaced. Clicking Cancel cancels the action and returns you to the Add or Edit Sound dialogue where you can select a new key for the sound and continue editing it.
 
@@ -76,7 +76,7 @@ Each sound in a .cuemasher XML file is expected to be encapsulated in "Sound" op
 
 ```
 <Sound>
-    <Path>Full path to the sound file, .wav only</Path>
+    <Path>full path to the sound file, .wav only</Path>
     <KeyCode>the key code of the keyboard key</KeyCode>
     <KeyName>the name of the key to display in the GUI</KeyName>
     <SoundName>the name of the sound to display in the GUI</SoundName>
@@ -106,17 +106,12 @@ For example, the following line specifies that the sound file located at "C:\\Am
 
 C:\\Amelia Earhart\\FinalAudio\\Music\\Along the Milky Way.wav,49,1,Milky Way,1
 
-## Unsupported Features and Known Bugs
+## Feature Requests and Known Bugs
 
-The following is a list of features that the application currently doesn't have and known problems. These I will work on as I find that I need them for my own use or as requested.
+The following is a list of feature requests and known problems. These I will work on as I find that I need them for my own use or as requested.
 
-### High Priority
-
-* Needs an executable to run outside an IDE.
-* A bug that causes a sound effect to loop indefinitely when one or more keys are pressed quickly at the same time needs to be fixed.
-
-### Low Priority
-
+* Add support for ',' key.
+* Save changes to capitalization of sound names in the Edit Sound dialogue.
 * Needs ability to fade sound effects and music rather than hard stopping them.
 * Needs ability to raise or lower sound volume per sound.
 * Needs ability to loop a sound.
