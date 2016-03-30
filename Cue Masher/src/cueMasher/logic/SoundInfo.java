@@ -4,6 +4,7 @@
 package cuemasher.logic;
 
 import java.io.*;
+import java.util.ArrayList;
 import javax.sound.sampled.*;
 
 //Stores a sound: its path, button, player, keycode, label, and associated information
@@ -15,6 +16,7 @@ public class SoundInfo {
 	private String path, keyName, soundName;
 	private int keyCode;
 	private PCMFilePlayer sound;
+	private ArrayList<LineListener> lineListeners;
 	private boolean stoppable; //Indicates whether this sound can be stopped with spacebar or not
 	//Stopping short sound clips creates problems with where the file will begin playing again
 	
@@ -26,6 +28,7 @@ public class SoundInfo {
 	// stoppable - 1 if the sound can be stopped with the Spacebar, 0 if not
 	public SoundInfo(String soundPath, int keyCode, String keyName, String soundName, int stoppable) {
 		this.keyCode = keyCode;
+		lineListeners = new ArrayList<LineListener>();
 		setPath(soundPath);
 		setKeyName(keyName);
 		setSoundName(soundName);
@@ -62,6 +65,11 @@ public class SoundInfo {
 				try {
 					PCMFilePlayer clip = new PCMFilePlayer(soundFile);
 		            sound = clip;
+		            
+		            // Add all the listeners that were attached to the previous sound
+		            for (int i=0; i < lineListeners.size(); i++) {
+		            	sound.getLine().addLineListener(lineListeners.get(i));
+		    		}
 				} catch (IOException e) {
 					e.printStackTrace();
 					sound = null;
@@ -85,6 +93,7 @@ public class SoundInfo {
 	// listener - The listener to add
 	public void addSoundListener(LineListener listener) {
 		if (sound != null) {
+			lineListeners.add(listener);
 			sound.getLine().addLineListener(listener);
 		}
 	}
