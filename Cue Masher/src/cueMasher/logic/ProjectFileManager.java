@@ -163,13 +163,6 @@ public class ProjectFileManager {
 		return sound;
 	}
 	
-	// Plays the sound associated with the given keyboard key code
-	public void playSound(int keyCode) {
-		if (soundList.containsKey(keyCode)) {
-			soundList.get(keyCode).play();
-		}
-	}
-	
 	// Stop all stoppable sounds
 	public void stopSounds() {
 		Collection<SoundInfo> sounds = soundList.values();

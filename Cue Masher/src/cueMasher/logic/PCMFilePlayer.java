@@ -33,7 +33,7 @@ public class PCMFilePlayer implements Runnable {
 	   DataLine.Info info = new DataLine.Info (SourceDataLine.class, format); 
 	   line = (SourceDataLine) AudioSystem.getLine (info);      
 	   line.open(); 
-	   playThread = new Thread (this); 
+	   playThread = new Thread (this);
 	   playing = false; 
 	   notYetEOF = true;        
 	   playThread.start();
@@ -77,6 +77,11 @@ public class PCMFilePlayer implements Runnable {
 		}
 	} // run
 
+	// Returns if the sound is playing
+	public boolean getPlaying() {
+		return (playing && notYetEOF);
+	}
+	
 	public void start() {
 		playing = true;
 		if (! playThread.isAlive()) {

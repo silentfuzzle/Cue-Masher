@@ -50,14 +50,7 @@ public class SoundButton extends BoardButton {
 	// Plays the associated sound effect when the GUI button is clicked
 	private class ButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
-			if (dialogManager.getEditingMode()) {
-				// Open the sound editing dialog in editing mode
-				dialogManager.displayEditSoundDialog(soundInfo);
-			}
-			else {
-				// Otherwise, play the sound
-				soundInfo.play();
-			}
+			dialogManager.handleSoundEvent(soundInfo);
 		}
 	}
 }

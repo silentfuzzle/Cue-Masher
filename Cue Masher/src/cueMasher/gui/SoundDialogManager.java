@@ -23,9 +23,17 @@ public class SoundDialogManager {
 		openNewDialogs = new HashSet<NewSoundDialog>();
 	}
 	
-	// Returns if the interface is in sound editing mode
-	public boolean getEditingMode() {
-		return panel.getEditingMode();
+	// Determines what to do with a sound the user has selected with a button or key
+	// soundInfo - The object containing information about the selected sound
+	public void handleSoundEvent(SoundInfo soundInfo) {
+		if (panel.getEditingMode()) {
+			// Open the sound editing dialog in editing mode
+			displayEditSoundDialog(soundInfo);
+		}
+		else {
+			// Otherwise, play the sound
+			soundInfo.play();
+		}
 	}
 	
 	// Removes the given Sound dialog box from the list of open sound dialog boxes

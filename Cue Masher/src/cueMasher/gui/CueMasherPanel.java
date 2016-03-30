@@ -364,19 +364,15 @@ public class CueMasherPanel extends JPanel {
 				// Stop all stoppable sounds
 				soundManager.stopSounds();
 			else {
-				if (getEditingMode()) {
-					// In editing mode, open the sound in the Edit Sound dialog box
-					SoundInfo sound = soundManager.getSound(keyCode);
-					if (sound != null) {
-						dialogManager.displayEditSoundDialog(sound);
-					}
-					else if (keyCode != KeyEvent.VK_SHIFT && keyCode != KeyEvent.VK_CAPS_LOCK){
-						dialogManager.displayNewSoundDialog();
-					}
+				SoundInfo sound = soundManager.getSound(keyCode);
+				if (sound != null) {
+					// Play, stop, or edit the sound
+					dialogManager.handleSoundEvent(sound);
 				}
-				else {
-					// Otherwise, play the associated sound
-					soundManager.playSound(keyCode);
+				else if (getEditingMode() && keyCode != KeyEvent.VK_SHIFT && 
+						keyCode != KeyEvent.VK_CAPS_LOCK) {
+					// Create a new sound
+					dialogManager.displayNewSoundDialog();
 				}
 			}
 		}

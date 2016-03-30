@@ -150,4 +150,9 @@ public class SoundInfo {
 			sound.close();
 		}
 	}
+
+	// Returns if the sound is playing
+	public boolean getPlaying() {
+		return sound.getPlaying();
+	}
 }
