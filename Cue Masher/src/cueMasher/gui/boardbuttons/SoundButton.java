@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.event.*;
 import cuemasher.logic.SoundInfo;
 import cuemasher.gui.SoundDialogManager;
+import javax.sound.sampled.*;
 
 // This class defines a sound board button that plays a user-defined sound.
 public class SoundButton extends BoardButton {
@@ -24,6 +25,10 @@ public class SoundButton extends BoardButton {
 		// The sound file couldn't be opened, color the button to inform the user
 		if (!soundInfo.getSoundOpen()) {
 			getButton().setBackground(Color.pink);
+		}
+		else {
+			// Listen for when the sound stops and starts
+			soundInfo.addSoundListener(new SoundListener());
 		}
 	}
 
@@ -51,6 +56,24 @@ public class SoundButton extends BoardButton {
 	private class ButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
 			dialogManager.handleSoundEvent(soundInfo);
+		}
+	}
+	
+	// Colors the button to show whether the sound is playing or not
+	private class SoundListener implements LineListener {
+		public void update(LineEvent event) {
+			// Get the color to set the button to
+			Color newBackground = null;
+			if (soundInfo.getPlaying()) {
+				newBackground = Color.green;
+			}
+			
+			Color currBackground = getButton().getBackground();
+			if (currBackground != newBackground) {
+				// Update the button color if it has changed
+				getButton().setBackground(newBackground);
+				dialogManager.refreshSoundBoard();
+			}
 		}
 	}
 }

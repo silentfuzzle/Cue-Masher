@@ -206,8 +206,7 @@ public class CueMasherPanel extends JPanel {
 
 				// Update the GUI
 				frame.setProjectModified();
-				revalidate();
-		        repaint();
+				refreshSoundBoard();
 		        
 		        break;
 			}
@@ -242,8 +241,7 @@ public class CueMasherPanel extends JPanel {
 			
 			// Update the GUI
 			frame.setProjectModified();
-			revalidate();
-	        repaint();
+			refreshSoundBoard();
 		}
 	}
 	
@@ -267,11 +265,16 @@ public class CueMasherPanel extends JPanel {
 			BoardButton curr = soundList.get(i);
 			remove(curr.getButton());
 		}
-		revalidate();
-        repaint();
+		refreshSoundBoard();
 
         // Refresh the list of sound board buttons
 		soundList = new ArrayList<BoardButton>();
+	}
+	
+	// Update the color, size, or position of elements on the sound board
+	public void refreshSoundBoard() {
+		revalidate();
+		repaint();
 	}
 	
 	//Set the positions and sizes of the buttons and display the panel

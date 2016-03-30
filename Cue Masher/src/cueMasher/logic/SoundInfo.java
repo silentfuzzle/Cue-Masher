@@ -3,11 +3,8 @@
 
 package cuemasher.logic;
 
-import java.io.File;
-import java.io.IOException;
-
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.*;
+import javax.sound.sampled.*;
 
 //Stores a sound: its path, button, player, keycode, label, and associated information
 public class SoundInfo {
@@ -84,6 +81,14 @@ public class SoundInfo {
 		return path;
 	}
 	
+	// Add a listener to the sound to perform an action when it stops or starts
+	// listener - The listener to add
+	public void addSoundListener(LineListener listener) {
+		if (sound != null) {
+			sound.getLine().addLineListener(listener);
+		}
+	}
+	
 	// Returns whether the sound file could be opened
 	public boolean getSoundOpen() {
 		return (sound != null);
@@ -132,8 +137,7 @@ public class SoundInfo {
 
 	//Play the sound if it is playable
 	public void play() {
-		if (sound != null)
-		{
+		if (sound != null) {
 			sound.start();
 		}
 	}

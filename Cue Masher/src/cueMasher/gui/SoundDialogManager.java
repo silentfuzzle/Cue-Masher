@@ -36,6 +36,11 @@ public class SoundDialogManager {
 		}
 	}
 	
+	// Update the color, size, or position of elements on the sound board
+	public void refreshSoundBoard() {
+		panel.refreshSoundBoard();
+	}
+	
 	// Removes the given Sound dialog box from the list of open sound dialog boxes
 	// dialog - The dialog box to remove from the open dialogs
 	// keyCode - The keyCode the Edit Sound dialog box is editing or -1 if it is a New Sound dialog box
