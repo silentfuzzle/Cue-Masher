@@ -57,34 +57,8 @@ public class SoundInfo {
 		if (this.path == null || !this.path.equalsIgnoreCase(path)) {
 			this.path = path;
 			
-			// Close the open sound player
-			if (sound != null)
-				sound.close();
-
-			// Don't create the sound player if this is a dummy object
-			if (keyCode != DEFAULT_KEY_CODE) {
-				
-		        //Create the player that will stop, play and reset the sound file
-				File soundFile = new File(this.path);
-				try {
-					PCMFilePlayer clip = new PCMFilePlayer(soundFile);
-		            sound = clip;
-		            
-		            // Add all the listeners that were attached to the previous sound
-		            for (int i=0; i < lineListeners.size(); i++) {
-		            	sound.getLine().addLineListener(lineListeners.get(i));
-		    		}
-				} catch (IOException e) {
-					e.printStackTrace();
-					sound = null;
-				} catch (UnsupportedAudioFileException e) {
-					e.printStackTrace();
-					sound = null;
-				} catch (LineUnavailableException e) {
-					e.printStackTrace();
-					sound = null;
-				}
-			}
+			// Open the sound file
+			open();
 		}
 	}
 
@@ -171,11 +145,51 @@ public class SoundInfo {
 	public boolean isToggleable() {
 		return toggleable;
 	}
+	
+	// Open the sound file
+	private void open() {
+		
+		// Close the open sound player
+		if (sound != null)
+			sound.close();
+
+		// Don't create the sound player if this is a dummy object
+		if (keyCode != DEFAULT_KEY_CODE) {
+			
+	        //Create the player that will stop, play and reset the sound file
+			File soundFile = new File(this.path);
+			try {
+				PCMFilePlayer clip = new PCMFilePlayer(soundFile);
+	            sound = clip;
+	            
+	            // Add all the listeners that were attached to the previous sound
+	            for (int i=0; i < lineListeners.size(); i++) {
+	            	sound.getLine().addLineListener(lineListeners.get(i));
+	    		}
+			} catch (IOException e) {
+				e.printStackTrace();
+				sound = null;
+			} catch (UnsupportedAudioFileException e) {
+				e.printStackTrace();
+				sound = null;
+			} catch (LineUnavailableException e) {
+				e.printStackTrace();
+				sound = null;
+			}
+		}
+	}
 
 	// Play the sound if it is playable
 	public void play() {
 		if (sound != null) {
 			sound.start();
+		}
+	}
+	
+	// Reset the sound to the beginning
+	public void reset() {
+		if ((stoppable || toggleable) && sound != null) {
+			open();
 		}
 	}
 	

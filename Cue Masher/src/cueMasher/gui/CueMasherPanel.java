@@ -257,6 +257,11 @@ public class CueMasherPanel extends JPanel {
 		add(buttonContainer.getButton());
 	}
 	
+	// Reset all Stoppable and Toggleable sounds
+	public void resetSounds() {
+		soundManager.resetSounds();
+	}
+	
 	// Clears all the buttons from the GUI
 	private void clearBoard() {
 

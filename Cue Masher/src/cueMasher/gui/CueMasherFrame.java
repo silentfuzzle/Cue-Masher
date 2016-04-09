@@ -69,6 +69,11 @@ public class CueMasherFrame extends JFrame {
 		saveFileAs.addActionListener(new SaveAsListener());
 		fileMenu.add(saveFileAs);
 		
+		JMenuItem resetSound = new JMenuItem("Reset Sounds");
+		resetSound.addActionListener(new ResetSoundsListener());
+		resetSound.setToolTipText("Reset all Stoppable and Toggleable sounds to the beginning.");
+		fileMenu.add(resetSound);
+		
 		JMenuItem quit = new JMenuItem("Quit");
 		quit.addActionListener(new QuitListener());
 		fileMenu.add(quit);
@@ -237,6 +242,13 @@ public class CueMasherFrame extends JFrame {
 	private class AddSoundListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
 			panel.getDialogManager().displayNewSoundDialog();
+		}
+	}
+	
+	// Resets all Stoppable and Toggleable sounds to the beginning
+	private class ResetSoundsListener implements ActionListener {
+		public void actionPerformed(ActionEvent event) {
+			panel.resetSounds();
 		}
 	}
 	

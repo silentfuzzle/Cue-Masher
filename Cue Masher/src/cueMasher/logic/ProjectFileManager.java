@@ -164,7 +164,15 @@ public class ProjectFileManager {
 		return sound;
 	}
 	
-	// Stop all stoppable sounds
+	// Reset all Stoppable and Toggleable sounds
+	public void resetSounds() {
+		Collection<SoundInfo> sounds = soundList.values();
+        for(SoundInfo sound: sounds){
+    		sound.reset();
+        }
+	}
+	
+	// Stop all Stoppable sounds
 	public void stopSounds() {
 		Collection<SoundInfo> sounds = soundList.values();
         for(SoundInfo sound: sounds){

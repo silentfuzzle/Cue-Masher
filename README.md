@@ -1,6 +1,6 @@
 # Cue Masher
 
-Cue Masher is a basic, open-source digital soundboard created for plays and other theater productions with complex sound designs and live sound cues. I wrote this application for a production of "Bullshot Crummond" and have also used it for "Amelia Earhart," "The Diary of Adam and Eve," and "Obsurd Person Singular." With it, you can map keys on your keyboard to sound effects and music, creating a digital soundboard. Sounds can be played by clicking their associated buttons in the GUI or using the keyboard keys. Cue Masher allows you to quickly create and edit your projects/sound boards even while simultaneously playing sounds. The application can play multiple sound tracks and sound effects at the same time. Sounds you specify can be stopped by pressing the Spacebar or toggled with their corresponding key or button.
+Cue Masher is a basic, open-source digital soundboard created for plays and other theater productions with complex sound designs and live sound cues. I wrote this application for a production of "Bullshot Crummond" and have also used it for "Amelia Earhart," "The Diary of Adam and Eve," and "Absurd Person Singular." With it, you can map keys on your keyboard to sound effects and music, creating a digital soundboard. Sounds can be played by clicking their associated buttons in the GUI or using the keyboard keys. Cue Masher allows you to quickly create and edit your projects/sound boards even while simultaneously playing sounds. The application can play multiple sound tracks and sound effects at the same time. Sounds you specify can be stopped by pressing the Spacebar or toggled with their corresponding key or button.
 
 This is a desktop application written in Java and runs with an executable .jar file (see releases). It accepts .wav formatted sound files and assumes that you are using a QWERTY keyboard.
 
@@ -58,6 +58,10 @@ To save the open project, select File > Save from the menu. If you have a new pr
 
 Select File > Save As from the menu bar to save the open project to a new or existing .cuemasher file. If you are seeing error messages when trying to save your project file, try this option to select a different file location.
 
+### Reset Sounds
+
+Click this option to reset all Stoppable and Toggleable sounds to the beginning of their sound files.
+
 ### Quit
 
 You can close Cue Masher by selecting File > Quit from the menu bar or by clicking the exit button in the corner of the window. You may be prompted to save or discard the changes to your current project.
@@ -114,7 +118,6 @@ The following is a list of feature requests and known problems. These I will wor
 * Needs ability to fade sound effects and music rather than hard stopping them.
 * Needs ability to raise or lower sound volume per sound.
 * Needs ability to loop a sound.
-* Needs ability to restart a long sound effect or music from the beginning.
 * Needs ability to play sounds of different file types.
 * Needs ability to accept keyboards with different key configurations.
 * Needs to display buttons in a layout so that buttons are always aligned.
