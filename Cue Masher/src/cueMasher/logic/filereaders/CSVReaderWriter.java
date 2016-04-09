@@ -8,6 +8,7 @@ import java.util.*;
 import cuemasher.logic.SoundInfo;
 
 // This class reads and writes project files in a csv format.
+// Toggleable is not supported.
 public class CSVReaderWriter extends FileReaderWriter {
 	
 	// Constructor
@@ -45,10 +46,10 @@ public class CSVReaderWriter extends FileReaderWriter {
 					String keyName = getKeyName(getNextFromScanner(scanLine));
 					if (getValidSound(soundPath, keyCode, keyName)) {
 						String soundName = getSoundName(getNextFromScanner(scanLine));
-						int stoppable = getStoppable(getNextFromScanner(scanLine));
+						int stoppable = getBinaryFromString(getNextFromScanner(scanLine));
 						
 						// Save the information to an object
-						SoundInfo soundClip = new SoundInfo(soundPath, keyCode, keyName, soundName, stoppable);
+						SoundInfo soundClip = new SoundInfo(soundPath, keyCode, keyName, soundName, stoppable, 0);
 						sounds.add(soundClip);
 					}
 				}

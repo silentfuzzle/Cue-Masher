@@ -1,6 +1,6 @@
 # Cue Masher
 
-Cue Masher is a basic, open-source digital soundboard created for plays and other theater productions with complex sound designs and live sound cues. I wrote this application for a production of "Bullshot Crummond" and have also used it for "Amelia Earhart" and "The Diary of Adam and Eve." With it, you can map keys on your keyboard to sound effects and music, creating a digital soundboard. Sounds can be played by clicking their associated buttons in the GUI or using the keyboard keys. Cue Masher allows you to quickly create and edit your projects/sound boards even while simultaneously playing sounds. The application can play multiple sound tracks and sound effects at the same time, and sounds that you specify can be stopped by pressing the Spacebar.
+Cue Masher is a basic, open-source digital soundboard created for plays and other theater productions with complex sound designs and live sound cues. I wrote this application for a production of "Bullshot Crummond" and have also used it for "Amelia Earhart," "The Diary of Adam and Eve," and "Obsurd Person Singular." With it, you can map keys on your keyboard to sound effects and music, creating a digital soundboard. Sounds can be played by clicking their associated buttons in the GUI or using the keyboard keys. Cue Masher allows you to quickly create and edit your projects/sound boards even while simultaneously playing sounds. The application can play multiple sound tracks and sound effects at the same time. Sounds you specify can be stopped by pressing the Spacebar or toggled with their corresponding key or button.
 
 This is a desktop application written in Java and runs with an executable .jar file (see releases). It accepts .wav formatted sound files and assumes that you are using a QWERTY keyboard.
 
@@ -18,15 +18,13 @@ There are several ways that you can add new sounds to a project. The simplest wa
 
 In the following dialogue box, you can select a .wav file from your computer, select the keyboard key you would like to use to play the sound, and name the sound. Click "Browse..." to select a .wav file from a File Chooser. When you enter a key into the text box, make sure you are not holding down the Shift key, or your entry won't be allowed. Also, make sure that you are entering a supported key, or you will receive a warning when you try to add it to the board. Sounds can have a name with a maximum length of twenty characters.
 
-You can also indicate whether the sound is "Stoppable" or not. Stoppable sounds can be stopped by pressing the Spacebar in the main interface and resumed by pressing the sound's key. This is recommended for music and long, atmospheric sound effects but isn't recommended for short sound effects such as punches.
+You can also indicate whether the sound is "Stoppable" or "Toggleable." Stoppable sounds can be stopped by pressing the Spacebar in the main interface and resumed by pressing the sound's key. Toggleable sounds can be played by pressing the sound's key and stopped by pressing the key again. This allows you to program multiple sounds to stop by pressing the Spacebar, or stop individual sounds by pressing their corresponding button, while other sounds continue playing. One or both of these options are recommended for music and long, atmospheric sound effects but aren't recommended for short sound effects such as punches.
 
 When you're finished, click Add to add the sound to the project's sound board. If you have assigned a new sound to a key that is already associated with a sound, you'll be asked to resolve the conflict. See Editing Sounds below for more information. Click Cancel in the New Sound dialogue to discard the new sound without making any changes. You can have a maximum of five New Sound dialogue boxes open at a time.
 
 ### Playing Sounds
 
-To play the sounds on the sound board, click the buttons on the interface or press the corresponding keys on the keyboard. Make sure that Edit > Editing mode isn't checked and that you aren't holding down the Shift key. If a button on the board is colored pink, this means that the sound file couldn't be found or opened, and the sound isn't playable. You can stop all Stoppable sounds by pressing the Spacebar or clicking the Stop button at the bottom of the interface.
-
-Note that there is a known bug that causes sounds to loop infinitely if they are stopped or started repeatedly. If this happens, you will need to close and reopen Cue Masher.
+To play the sounds on the sound board, click the buttons on the interface or press the corresponding keys on the keyboard. Make sure that Edit > Editing mode isn't checked and that you aren't holding down the Shift key. If a button on the board is colored pink, this means that the sound file couldn't be found or opened, and the sound isn't playable. While a sound is playing, its corresponding board button will be colored green. You can stop all Stoppable sounds by pressing the Spacebar or clicking the Stop button at the bottom of the interface. You can also stop Toggleable sounds by pressing their corresponding keys on the keyboard or clicking their corresponding buttons in the interface.
 
 ### Editing Sounds
 
@@ -81,10 +79,11 @@ Each sound in a .cuemasher XML file is expected to be encapsulated in "Sound" op
     <KeyName>the name of the key to display in the GUI</KeyName>
     <SoundName>the name of the sound to display in the GUI</SoundName>
     <Stoppable>0 if the sound can't be stopped with the Spacebar, 1 if it can</Stoppable>
+    <Toggleable>0 if the sound can't be toggled with its key/button, 1 if it can</Toggleable>
 </Sound>
 ```
 
-For example, the following sound definition specifies that the sound file located at "C:\\Amelia Earhart\\FinalAudio\\Music\\Along the Milky Way.wav" should be played when the "1" key, which has the key code "49", is pressed. This sound effect is displayed as "Milky Way" in the GUI and can be stopped before it finishes by pressing the Spacebar as specified by the Stoppable attribute "1".
+For example, the following sound definition specifies that the sound file located at "C:\\Amelia Earhart\\FinalAudio\\Music\\Along the Milky Way.wav" should be played when the "1" key, which has the key code "49", is pressed. This sound effect is displayed as "Milky Way" in the GUI and can be stopped before it finishes by pressing the Spacebar as specified by the Stoppable attribute "1". It's not Toggleable and so can't be stopped by pressing "1" again.
 
 ```
 <Sound>
@@ -93,12 +92,13 @@ For example, the following sound definition specifies that the sound file locate
     <KeyName>1</KeyName>
     <SoundName>Milky Way</SoundName>
     <Stoppable>1</Stoppable>
+    <Toggleable>0</Toggleable>
 </Sound>
 ```
 
 ### CSV Format (deprecated)
 
-The current version of Cue Masher isn't set up to read or write CSV files anymore, but the code for this still exists in the code base. Under the .cuemasher CSV file format, the ',' isn't a supported key and file paths and sound names with commas in them will not be read correctly. Each line should be formatted as follows:
+The current version of Cue Masher isn't set up to read or write CSV files anymore, but the code for this still exists in the code base. Under the .cuemasher CSV file format, the ',' isn't a supported key, the Toggleable attribute isn't supported, and file paths and sound names with commas in them will not be read correctly. Each line should be formatted as follows:
 
 [Full path to the sound file, .wav only, no commas],[the key code of the keyboard key],[the name of the key to display in the GUI, no commas],[the name of the sound to display in the GUI, no commas],[0 if the sound can't be stopped with the Spacebar, 1 if it can]
 
@@ -111,11 +111,9 @@ C:\\Amelia Earhart\\FinalAudio\\Music\\Along the Milky Way.wav,49,1,Milky Way,1
 The following is a list of feature requests and known problems. These I will work on as I find that I need them for my own use or as requested.
 
 * Add support for ',' key.
-* Save changes to capitalization of sound names in the Edit Sound dialogue.
 * Needs ability to fade sound effects and music rather than hard stopping them.
 * Needs ability to raise or lower sound volume per sound.
 * Needs ability to loop a sound.
-* Needs ability to stop a single sound effect when multiple sound effects are playing.
 * Needs ability to restart a long sound effect or music from the beginning.
 * Needs ability to play sounds of different file types.
 * Needs ability to accept keyboards with different key configurations.

@@ -23,7 +23,7 @@ public class NewSoundDialog extends JPanel {
 	private JButton btnSelectSound, btnAddSound, btnDeleteSound, btnCopySound, btnCancel;
 	private JLabel lblKey, lblFinalKey, lblName, lblWarning;
 	private JTextField txtSoundPath, txtKey, txtSoundName;
-	private JCheckBox cbxStoppable;
+	private JCheckBox cbxStoppable, cbxToggleable;
 	private SoundInfo soundInfo;
 	
 	private int enteredKeyCode = SoundInfo.DEFAULT_KEY_CODE;
@@ -64,9 +64,8 @@ public class NewSoundDialog extends JPanel {
 		// Display the current information about the sound being edited
 		setPath(soundInfo.getPath());
 		txtSoundName.setText(soundInfo.getSoundName());
-		if (soundInfo.getStoppable() != 0) {
-			cbxStoppable.setSelected(true);
-		}
+		cbxStoppable.setSelected(soundInfo.isStoppable());
+		cbxToggleable.setSelected(soundInfo.isToggleable());
 	}
 	
 	// Constructor for creating a new sound
@@ -141,7 +140,11 @@ public class NewSoundDialog extends JPanel {
 		
 		// Define the checkbox determining whether the sound is stoppable or not
 		cbxStoppable = new JCheckBox("Stoppable");
+		cbxStoppable.setToolTipText("This sound can be stopped by pressing the Spacebar key or button.");
 		add(cbxStoppable);
+		cbxToggleable = new JCheckBox("Toggleable");
+		cbxToggleable.setToolTipText("This sound can be stopped and started by pressing its corresponding key or button.");
+		add(cbxToggleable);
 		/*loop = new JCheckBox("Loop");
 		add(loop);*/
 	}
@@ -163,6 +166,7 @@ public class NewSoundDialog extends JPanel {
 		txtSoundName.setSize(190,20);
 		
 		cbxStoppable.setLocation(10,106);
+		cbxToggleable.setLocation(20+cbxStoppable.getWidth(),106);
 		//loop.setLocation(102, 106);
 		
 		btnAddSound.setLocation(10,140);
@@ -201,7 +205,8 @@ public class NewSoundDialog extends JPanel {
 		SoundInfo copy = new SoundInfo(existingSound.getPath(), 
 				SoundInfo.DEFAULT_KEY_CODE, "", 
 				existingSound.getSoundName(), 
-				existingSound.getStoppable());
+				existingSound.getStoppable(),
+				existingSound.getToggleable());
 		
 		// Attempt to display the sound in a new Sound Dialog
 		boolean displayed = parentPanel.getDialogManager().displayEditSoundDialog(copy);
@@ -315,6 +320,12 @@ public class NewSoundDialog extends JPanel {
 				stoppable = 1;
 			}
 			
+			// Get whether the sound is toggleable or not
+			int toggleable = 0;
+			if (cbxToggleable.isSelected()) {
+				toggleable = 1;
+			}
+			
 			// Check if the key the user has selected is already associated with a sound
 			// Don't complain if the user is updating an existing sound and not changing its key
 			SoundInfo existingSound = parentPanel.getSound(enteredKeyCode);
@@ -363,7 +374,7 @@ public class NewSoundDialog extends JPanel {
 			}
 			
 			// Add or update the sound in the interface
-			SoundInfo soundClip = new SoundInfo(soundPath, enteredKeyCode, keyName, soundName, stoppable);
+			SoundInfo soundClip = new SoundInfo(soundPath, enteredKeyCode, keyName, soundName, stoppable, toggleable);
 			parentPanel.updateSound(soundClip);
 			
 			closeFrame();

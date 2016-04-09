@@ -69,12 +69,12 @@ public abstract class FileReaderWriter {
 		return soundName;
 	}
 	
-	// Returns the stoppable attribute to add to the sound object, transforming it to make it valid if needed
-	// stoppableString - The stoppable attribute retrieved from the open Cue Masher file
-	protected int getStoppable(String stoppableString) {
-		int stoppable = parseNumber(stoppableString);
+	// Returns a binary attribute to add to the sound object, transforming it to make it valid if needed
+	// binaryString - The attribute retrieved from the open Cue Masher file, a number is expected
+	protected int getBinaryFromString(String binaryString) {
+		int stoppable = parseNumber(binaryString);
 		if (stoppable < 0) {
-			// The stoppable attribute couldn't be retrieved or isn't valid
+			// The attribute couldn't be retrieved or isn't valid
 			stoppable = 0;
 			setReadError();
 		}

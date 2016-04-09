@@ -15,6 +15,7 @@ public class XMLReaderWriter extends FileReaderWriter {
 	private String KEY_NAME_TAG = "KeyName";
 	private String SOUND_NAME_TAG = "SoundName";
 	private String STOPPABLE_TAG = "Stoppable";
+	private String TOGGLEABLE_TAG = "Toggleable";
 	
 	// Constructor
 	// filePath - The path to the project file
@@ -59,10 +60,11 @@ public class XMLReaderWriter extends FileReaderWriter {
 					
 					if (getValidSound(soundPath, keyCode, keyName)) {
 						String soundName = getSoundName(getTagContents(soundLine, SOUND_NAME_TAG, 0));
-						int stoppable = getStoppable(getTagContents(soundLine, STOPPABLE_TAG, 0));
+						int stoppable = getBinaryFromString(getTagContents(soundLine, STOPPABLE_TAG, 0));
+						int toggleable = getBinaryFromString(getTagContents(soundLine, TOGGLEABLE_TAG, 0));
 						
 						// Store the sound in an object
-						SoundInfo soundClip = new SoundInfo(soundPath, keyCode, keyName, soundName, stoppable);
+						SoundInfo soundClip = new SoundInfo(soundPath, keyCode, keyName, soundName, stoppable, toggleable);
 						sounds.add(soundClip);
 					}
 				}
@@ -97,6 +99,7 @@ public class XMLReaderWriter extends FileReaderWriter {
 						wrapInStartTag(KEY_NAME_TAG) + sound.getKeyName() + wrapInEndTag(KEY_NAME_TAG) + 
 						wrapInStartTag(SOUND_NAME_TAG) + sound.getSoundName() + wrapInEndTag(SOUND_NAME_TAG) + 
 						wrapInStartTag(STOPPABLE_TAG) + sound.getStoppable() + wrapInEndTag(STOPPABLE_TAG) + 
+						wrapInStartTag(TOGGLEABLE_TAG) + sound.getToggleable() + wrapInEndTag(TOGGLEABLE_TAG) +
 						wrapInEndTag(SOUND_TAG));
 	        }
 			

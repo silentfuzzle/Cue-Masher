@@ -128,6 +128,7 @@ public class ProjectFileManager {
 				existingClip.setKeyName(soundClip.getKeyName());
 				existingClip.setSoundName(soundClip.getSoundName());
 				existingClip.setStoppable(soundClip.getStoppable());
+				existingClip.setToggleable(soundClip.getToggleable());
 				projectModified = true;
 			}
 			soundClip.close();
@@ -167,7 +168,8 @@ public class ProjectFileManager {
 	public void stopSounds() {
 		Collection<SoundInfo> sounds = soundList.values();
         for(SoundInfo sound: sounds){
-            sound.stop();
+        	if (sound.isStoppable())
+        		sound.stop();
         }
 	}
 }

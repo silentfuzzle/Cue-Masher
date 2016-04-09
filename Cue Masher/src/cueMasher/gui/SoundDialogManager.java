@@ -30,6 +30,10 @@ public class SoundDialogManager {
 			// Open the sound editing dialog in editing mode
 			displayEditSoundDialog(soundInfo);
 		}
+		else if (soundInfo.isToggleable() && soundInfo.getPlaying()) {
+			// Toggle the sound off
+			soundInfo.stop();
+		}
 		else {
 			// Otherwise, play the sound
 			soundInfo.play();

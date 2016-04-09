@@ -18,7 +18,8 @@ public class SoundInfo {
 	private PCMFilePlayer sound;
 	private ArrayList<LineListener> lineListeners;
 	private boolean stoppable; //Indicates whether this sound can be stopped with spacebar or not
-	//Stopping short sound clips creates problems with where the file will begin playing again
+	private boolean toggleable; //Indicates whether this sound can be toggled on and off with its corresponding key/button
+	//Stopping short sound clips isn't recommended
 	
 	//Constructor
 	// soundPath - The path to the sound file on the file system
@@ -26,13 +27,15 @@ public class SoundInfo {
 	// keyName - The name of the key the user can press to play the sound
 	// soundName - The short name of the sound to display in the GUI
 	// stoppable - 1 if the sound can be stopped with the Spacebar, 0 if not
-	public SoundInfo(String soundPath, int keyCode, String keyName, String soundName, int stoppable) {
+	// toggleable - 1 if the sound can be toggled on and off with its corresponding key/button
+	public SoundInfo(String soundPath, int keyCode, String keyName, String soundName, int stoppable, int toggleable) {
 		this.keyCode = keyCode;
 		lineListeners = new ArrayList<LineListener>();
 		setPath(soundPath);
 		setKeyName(keyName);
 		setSoundName(soundName);
 		setStoppable(stoppable);
+		setToggleable(toggleable);
 	}
 
 	// Returns if all the information about this sound is equal to another sound's information
@@ -40,9 +43,10 @@ public class SoundInfo {
 	public boolean equals(SoundInfo otherSound) {
 		boolean equal = otherSound.getPath().equalsIgnoreCase(path);
 		equal = (equal && otherSound.getKeyName().equalsIgnoreCase(keyName));
-		equal = (equal && otherSound.getSoundName().equalsIgnoreCase(soundName));
+		equal = (equal && otherSound.getSoundName().equals(soundName));
 		equal = (equal && (otherSound.getKeyCode() == keyCode));
 		equal = (equal && (otherSound.stoppable == stoppable));
+		equal = (equal && (otherSound.toggleable == toggleable));
 		
 		return equal;
 	}
@@ -130,30 +134,54 @@ public class SoundInfo {
 		return keyCode;
 	}
 	
-	// Sets whether this sound is stoppable
+	// Sets whether this sound is stoppable with Spacebar
 	// stoppable - 1 if the sound can be stopped with the Spacebar, 0 if not
 	public void setStoppable(int stoppable) {
 		this.stoppable = (stoppable != 0);
 	}
 	
-	// Gets an integer representing whether this sound is stoppable
+	// Returns an integer representing whether this sound is stoppable with Spacebar
 	public int getStoppable() {
 		if (stoppable)
 			return 1;
 		else
 			return 0;
 	}
+	
+	// Returns if this sound can be stopped
+	public boolean isStoppable() {
+		return stoppable;
+	}
+	
+	// Sets whether this sound is stoppable with the corresponding key/button
+	// toggleable - 1 if the sound can be stopped with its key/button, 0 if not
+	public void setToggleable(int toggleable) {
+		this.toggleable = (toggleable != 0);
+	}
+	
+	// Returns an integer representing whether this sound can be toggled on and off
+	public int getToggleable() {
+		if (toggleable)
+			return 1;
+		else
+			return 0;
+	}
+	
+	// Returns if this sound can be toggled
+	public boolean isToggleable() {
+		return toggleable;
+	}
 
-	//Play the sound if it is playable
+	// Play the sound if it is playable
 	public void play() {
 		if (sound != null) {
 			sound.start();
 		}
 	}
 	
-	//Stop the sound if it is stoppable
+	// Stop the sound if it is stoppable
 	public void stop() {
-		if (stoppable && sound != null)
+		if (sound != null)
 			sound.stop();
 	}
 	
